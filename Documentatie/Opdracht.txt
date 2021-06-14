@@ -7,12 +7,18 @@
 	4.2. Data ophalen
 	4.3. Data opslaan in lokale database (MySql?)
 	4.4. Data ophalen met parameters
+		4.4.1. Parameter meetstation
+		4.4.2. Parameter startdatum periode
+		4.4.3. Parameter einddatum periode
 	4.5. Specifieke endpoint voor tweede applicatie
 	4.6. Testing
 5. Bouw applicatie:
 	5.1. Verbinding met API
 	5.2. Data ophalen uit API
 	5.3. Data ophalen op basis van parameters uit API
+		5.3.1. Parameter meetstation
+		5.3.2. Parameter startdatum periode
+		5.3.3. Parameter einddatum periode
 	5.4. Grafiek plotten
 	5.5. Grafiek met meeteenheden
 	5.6. Meeteenheden togglen/filtreren met checkboxes
@@ -21,3 +27,16 @@
 7. Handleiding
 8. Regel SSL certificaat
 9. Self hosting of lokaal houden?
+
+[Wat moet ik doen?]
+Bronvermelding Buienradar met hyperlink https://www.buienradar.nl.
+Configuratie van interval (1x per uur/op boot standaard).
+Data ophalen uit de feed met drie (twee) parameters.
+	- Welk meetstation?
+	- Startdatum van meetbaar periode?
+	- Einddatum van meetbaar periode? (optioneel, default van startdatum+7)
+Data opslaan in lokale MySQL database.
+
+[Wat heb ik gedaan?]
+Nadat het project is aangemaakt, wordt automatisch een Swagger.io API opgezet.
+https://swagger.io is een gemakkelijkere manier om API's op te bouwen. Het maakt gebruik van de OpenAPI Specification (OAS).
