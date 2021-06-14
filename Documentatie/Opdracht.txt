@@ -17,3 +17,7 @@
 	5.5. Grafiek met meeteenheden
 	5.6. Meeteenheden togglen/filtreren met checkboxes
 	5.7. Testing
+6. Ruim documenteren met comments
+7. Handleiding
+8. Regel SSL certificaat
+9. Self hosting of lokaal houden?
