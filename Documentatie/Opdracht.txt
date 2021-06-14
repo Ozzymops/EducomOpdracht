@@ -1,0 +1,4 @@
+[Stappenplan]
+1. Creëer Visual Studio project met template 'ASP.NET Core Web App (Model-View-Controller)' genaamd 'EducomOpdracht'.
+2. Stel twee projects in: 'EducomOpdracht' en 'EducomOpdrachtAPI'.
+3. Upload initial commit naar GitHub zodat verdere updates meteen worden bijgehouden.
