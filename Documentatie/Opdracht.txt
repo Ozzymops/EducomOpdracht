@@ -2,3 +2,18 @@
 1. Creëer Visual Studio project met template 'ASP.NET Core Web App (Model-View-Controller)' genaamd 'EducomOpdracht'.
 2. Stel twee projects in: 'EducomOpdracht' en 'EducomOpdrachtAPI'.
 3. Upload initial commit naar GitHub zodat verdere updates meteen worden bijgehouden.
+4. Bouw API:
+	4.1. Configuratie van interval
+	4.2. Data ophalen
+	4.3. Data opslaan in lokale database (MySql?)
+	4.4. Data ophalen met parameters
+	4.5. Specifieke endpoint voor tweede applicatie
+	4.6. Testing
+5. Bouw applicatie:
+	5.1. Verbinding met API
+	5.2. Data ophalen uit API
+	5.3. Data ophalen op basis van parameters uit API
+	5.4. Grafiek plotten
+	5.5. Grafiek met meeteenheden
+	5.6. Meeteenheden togglen/filtreren met checkboxes
+	5.7. Testing
