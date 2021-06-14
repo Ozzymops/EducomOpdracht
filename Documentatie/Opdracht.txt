@@ -44,5 +44,7 @@ https://swagger.io is een gemakkelijkere manier om API's op te bouwen. Het maakt
 [NuGet]
 Microsoft.EntityFrameworkCore - Apache-2.0 licentie
 	Microsoft.EntityFrameworkCore.InMemory - lokale opslag
+	Microsoft.EntityFrameworkCore.Design - nodig voor scaffolded Entity Framework controllers
 	Microsoft.EntityFrameworkCore.Abstractions - dependancy, 
 	Microsoft.EntityFrameworkCore.Analyzers - dependancy, 
+	Microsoft.EntityFrameworkCore.Relational - dependancy, 
