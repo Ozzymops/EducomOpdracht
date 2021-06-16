@@ -80,7 +80,8 @@ namespace EducomOpdrachtAPI.Controllers
             _context.Weerberichten.Add(weerbericht);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetWeerbericht", new { id = weerbericht.Id }, weerbericht);
+            // return CreatedAtAction("GetWeerbericht", new { id = weerbericht.Id }, weerbericht);
+            return CreatedAtAction(nameof(GetWeerbericht), new { id = weerbericht.Id }, weerbericht);
         }
 
         // DELETE: api/Weerberichten/5

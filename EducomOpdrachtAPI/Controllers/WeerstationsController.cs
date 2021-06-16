@@ -80,7 +80,8 @@ namespace EducomOpdrachtAPI.Controllers
             _context.Weerstations.Add(weerstation);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetWeerstation", new { id = weerstation.Id }, weerstation);
+            // return CreatedAtAction("GetWeerstation", new { id = weerstation.Id }, weerstation);
+            return CreatedAtAction(nameof(GetWeerstation), new { id = weerstation.Id }, weerstation);
         }
 
         // DELETE: api/Weerstations/5

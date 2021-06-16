@@ -41,6 +41,11 @@ Data opslaan in lokale MySQL database.
 Nadat het project is aangemaakt, wordt automatisch een Swagger.io API opgezet.
 https://swagger.io is een gemakkelijkere manier om API's op te bouwen. Het maakt gebruik van de OpenAPI Specification (OAS).
 
+Vanuit meerdere bronnen heb ik gelezen dat je beter niet Tasks periodiek kan uitvoeren, aangezien IIS kan besluiten om dan net iets op te ruimen
+of iets anders te doen, waardoor de Task niet wordt uitgevoerd. Het is dus erg onbetrouwbaar.
+Daarom kies ik ervoor om via Windows Scheduler een klein console applicatie (EducomOpdrachtScheduledTask) periodiek uit te voeren, die een
+call op de API doet om de database te updaten.
+
 [NuGet]
 Microsoft.EntityFrameworkCore - Apache-2.0 licentie
 	Microsoft.EntityFrameworkCore.InMemory - lokale opslag
