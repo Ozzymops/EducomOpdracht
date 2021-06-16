@@ -43,7 +43,6 @@ namespace EducomOpdrachtTaskScheduler
             List<Weerbericht> weerberichten = new List<Weerbericht>();
 
             JObject parsedJson = JObject.Parse(json);
-            // int weerstationCount = parsedJson.Value<JArray>("buienradarnl.weergegevens.actueel_weer.weerstations.weerstation").Value<JArray>("tags").Count;
             int weerstationCount = parsedJson.SelectToken("buienradarnl.weergegevens.actueel_weer.weerstations").Value<JArray>("weerstation").Count;
             Console.WriteLine(weerstationCount.ToString() + " weerstations gevonden.");
 
