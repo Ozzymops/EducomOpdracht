@@ -4,6 +4,7 @@ using System.IO;
 using System.Net;
 using System.Text;
 using EducomOpdrachtTaskScheduler.Models;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace EducomOpdrachtTaskScheduler
@@ -13,30 +14,30 @@ namespace EducomOpdrachtTaskScheduler
         static void Main(string[] args)
         {
             // API URL om uit te voeren, in dit geval de update database functie.
-            Console.WriteLine("Console application started.");
-            string result = UpdateDatabase(System.Configuration.ConfigurationManager.AppSettings["apiUrl"], System.Configuration.ConfigurationManager.AppSettings["buienradarUrl"]);
-            Console.WriteLine("Finished, press any key to end application...");
+            Console.WriteLine(DateTime.Now.ToString() + " | Console application started.");
+            string result = UpdateDatabase(System.Configuration.ConfigurationManager.AppSettings["weerstationsUrl"], System.Configuration.ConfigurationManager.AppSettings["weerberichtenUrl"], System.Configuration.ConfigurationManager.AppSettings["buienradarUrl"]);
+            Console.WriteLine(DateTime.Now.ToString() + " | Finished, press any key to end application...");
             Console.Read(); // verwijder later, alleen voor debug
         }
 
-        public static string UpdateDatabase(string apiUrl, string buienradarUrl)
+        public static string UpdateDatabase(string weerstationsUrl, string weerberichtenUrl, string buienradarUrl)
         {
             string json = string.Empty;
 
             // Ophalen data buienradar door middel van een web request en response (benadert de API van buienradar)
-            Console.WriteLine("Creating web request...");
-            HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(buienradarUrl);
-            webRequest.Method = "GET";
-            webRequest.ContentType = "application/x-www-form-urlencoded";
+            Console.WriteLine(DateTime.Now.ToString() + " | Creating web request [GET]...");
+            HttpWebRequest getWebRequest = (HttpWebRequest)WebRequest.Create(buienradarUrl);
+            getWebRequest.Method = "GET";
+            getWebRequest.ContentType = "application/x-www-form-urlencoded";
 
-            Console.WriteLine("Done. Creating web response...");
-            HttpWebResponse webResponse = (HttpWebResponse)webRequest.GetResponse();
-            Encoding encoding = Encoding.GetEncoding("utf-8");
-            StreamReader responseStream = new StreamReader(webResponse.GetResponseStream(), encoding);
+            Console.WriteLine(DateTime.Now.ToString() + " | Done. Executing web response...");
+            HttpWebResponse getWebResponse = (HttpWebResponse)getWebRequest.GetResponse();
+            using (StreamReader getStreamReader = new StreamReader(getWebResponse.GetResponseStream()))
+            {
+                json = getStreamReader.ReadToEnd();
+            }
 
-            json = responseStream.ReadToEnd();
-            webResponse.Close();
-            Console.WriteLine("Done. Extracting relevant data from result...");
+            Console.WriteLine(DateTime.Now.ToString() + " | Done. Extracting relevant data from result...");
 
             // Haalt relevante data uit resultaat
             List<Weerstation> weerstations = new List<Weerstation>();
@@ -44,13 +45,12 @@ namespace EducomOpdrachtTaskScheduler
 
             JObject parsedJson = JObject.Parse(json);
             int weerstationCount = parsedJson.SelectToken("buienradarnl.weergegevens.actueel_weer.weerstations").Value<JArray>("weerstation").Count;
-            Console.WriteLine(weerstationCount.ToString() + " weerstations gevonden.");
+
+            Console.WriteLine(DateTime.Now.ToString() + " | Processing " + weerstationCount.ToString() + " results...");
 
             // Loop dat alle data verwerkt en in lijsten stopt
             for (int count = 0; count < weerstationCount; count++)
             {
-                Console.WriteLine("----------");
-
                 Weerstation weerstation = new Weerstation();
                 weerstation.Id = parsedJson.SelectToken("buienradarnl.weergegevens.actueel_weer.weerstations.weerstation[" + count + "].stationcode").Value<long>();
                 weerstation.Name = parsedJson.SelectToken("buienradarnl.weergegevens.actueel_weer.weerstations.weerstation[" + count + "].stationnaam.#text").Value<string>();
@@ -91,14 +91,50 @@ namespace EducomOpdrachtTaskScheduler
 
                 weerstations.Add(weerstation);
                 weerberichten.Add(weerbericht);
-
-                Console.WriteLine(count.ToString() + " | " + weerstation.Id + ": " + weerstation.Name + ", " + weerstation.Region);
-                Console.WriteLine(weerbericht.StationId.ToString() + " - Weer rondom " + weerbericht.Date.ToString() + ": " + weerbericht.Temperature.ToString() + "°C, luchtvochtigheid van " + weerbericht.Humidity.ToString() + " met een luchtdruk van " + weerbericht.AirPressure.ToString() );
             }
-            
-            // stuur door naar api 
+
+            // (misschien bad practice? maar werkt voor nu)
+            // Loop door de lijst en voer POST functies uit
+            foreach (Weerstation weerstation in weerstations)
+            {
+                // Serialiseer object in lijst zodat het verstuurd kan worden
+                string weerstationJson = JsonConvert.SerializeObject(weerstation);
+
+                // Verwijs naar POST functie
+                DoPost(weerstationsUrl, weerstationJson);
+            }
+
+            foreach (Weerbericht weerbericht in weerberichten)
+            {
+                // Serialiseer object in lijst zodat het verstuurd kan worden
+                string weerberichtJson = JsonConvert.SerializeObject(weerbericht);
+
+                // Verwijs naar POST functie
+                DoPost(weerberichtenUrl, weerberichtJson);
+            }
 
             return string.Empty;
+        }
+
+        public static void DoPost(string url, string json)
+        {
+            // POST functie richting API
+            HttpWebRequest postWebRequest = (HttpWebRequest)WebRequest.Create(url);
+            postWebRequest.ContentType = "application/json; charset=utf-8";
+            postWebRequest.Method = "POST";
+
+            using (StreamWriter streamWriter = new StreamWriter(postWebRequest.GetRequestStream()))
+            {
+                streamWriter.Write(json);
+                streamWriter.Flush();
+            }
+
+            HttpWebResponse postWebResponse = (HttpWebResponse)postWebRequest.GetResponse();
+            using (StreamReader postStreamReader = new StreamReader(postWebResponse.GetResponseStream()))
+            {
+                string response = postStreamReader.ReadToEnd();
+                Console.WriteLine(response);
+            }
         }
     }
 }

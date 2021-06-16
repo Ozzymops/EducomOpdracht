@@ -77,10 +77,18 @@ namespace EducomOpdrachtAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Weerstation>> PostWeerstation(Weerstation weerstation)
         {
-            _context.Weerstations.Add(weerstation);
-            await _context.SaveChangesAsync();
+            // Check of weerstation al bestaat, zodat er geen duplicates komen
+            if (!_context.Weerstations.Any(o => o.Id == weerstation.Id))
+            {
+                _context.Weerstations.Add(weerstation);
+                await _context.SaveChangesAsync();
+            }
+            // Als weerstation al bestaat, update het via PUT methode
+            else
+            {
+                // redirect to PUT
+            }
 
-            // return CreatedAtAction("GetWeerstation", new { id = weerstation.Id }, weerstation);
             return CreatedAtAction(nameof(GetWeerstation), new { id = weerstation.Id }, weerstation);
         }
 

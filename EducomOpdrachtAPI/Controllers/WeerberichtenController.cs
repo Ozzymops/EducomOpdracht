@@ -77,8 +77,15 @@ namespace EducomOpdrachtAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Weerbericht>> PostWeerbericht(Weerbericht weerbericht)
         {
-            _context.Weerberichten.Add(weerbericht);
-            await _context.SaveChangesAsync();
+            if (!_context.Weerberichten.Any(o => o.Date == weerbericht.Date && o.StationId == weerbericht.StationId))
+            {
+                _context.Weerberichten.Add(weerbericht);
+                await _context.SaveChangesAsync();
+            }
+            else
+            {
+                // Redirect to PUT
+            }
 
             // return CreatedAtAction("GetWeerbericht", new { id = weerbericht.Id }, weerbericht);
             return CreatedAtAction(nameof(GetWeerbericht), new { id = weerbericht.Id }, weerbericht);
