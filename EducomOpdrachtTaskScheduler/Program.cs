@@ -50,6 +50,7 @@ namespace EducomOpdrachtTaskScheduler
             for (int count = 0; count < weerstationCount; count++)
             {
                 Weerstation weerstation = new Weerstation();
+
                 weerstation.Id = parsedJson.SelectToken("buienradarnl.weergegevens.actueel_weer.weerstations.weerstation[" + count + "].stationcode").Value<long>();
                 Console.WriteLine(count.ToString() + " | " + weerstation.Id);
             }

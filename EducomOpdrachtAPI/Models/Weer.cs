@@ -2,7 +2,7 @@
 
 namespace EducomOpdrachtAPI.Models
 {
-    public class Weerstation
+    public class Weer
     {
         /// <summary>
         /// Een entry in de database.

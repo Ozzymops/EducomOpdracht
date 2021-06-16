@@ -12,7 +12,7 @@
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
-      "launchUrl": "api/Buienradar",
+      "launchUrl": "api/Weer",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

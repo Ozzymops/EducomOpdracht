@@ -22,8 +22,7 @@ namespace EducomOpdrachtAPI
         public void ConfigureServices(IServiceCollection services)
         {
             // Registratie van database context als service
-            services.AddDbContext<WeerstationContext>(opt => opt.UseInMemoryDatabase("Weerstations"));
-            services.AddDbContext<WeerberichtContext>(opt => opt.UseInMemoryDatabase("Weerberichten"));
+            services.AddDbContext<WeerContext>(opt => opt.UseInMemoryDatabase("Weerberichten"));
 
             services.AddControllers();
         }

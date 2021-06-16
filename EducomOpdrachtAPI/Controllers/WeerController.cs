@@ -11,25 +11,25 @@ namespace EducomOpdrachtAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class WeerberichtenController : ControllerBase
+    public class WeerController : ControllerBase
     {
-        private readonly WeerberichtContext _context;
+        private readonly WeerContext _context;
 
-        public WeerberichtenController(WeerberichtContext context)
+        public WeerController(WeerContext context)
         {
             _context = context;
         }
 
-        // GET: api/Weerberichten
+        // GET: api/Weer
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Weerbericht>>> GetWeerberichten()
+        public async Task<ActionResult<IEnumerable<Weer>>> GetWeer()
         {
             return await _context.Weerberichten.ToListAsync();
         }
 
-        // GET: api/Weerberichten/5
+        // GET: api/Weer/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Weerbericht>> GetWeerbericht(long id)
+        public async Task<ActionResult<Weer>> GetWeer(long id)
         {
             var weerbericht = await _context.Weerberichten.FindAsync(id);
 
@@ -41,10 +41,10 @@ namespace EducomOpdrachtAPI.Controllers
             return weerbericht;
         }
 
-        // PUT: api/Weerberichten/5
+        // PUT: api/Weer/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutWeerbericht(long id, Weerbericht weerbericht)
+        public async Task<IActionResult> PutWeer(long id, Weer weerbericht)
         {
             if (id != weerbericht.Id)
             {
@@ -59,7 +59,7 @@ namespace EducomOpdrachtAPI.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!WeerberichtExists(id))
+                if (!WeerExists(id))
                 {
                     return NotFound();
                 }
@@ -72,21 +72,20 @@ namespace EducomOpdrachtAPI.Controllers
             return NoContent();
         }
 
-        // POST: api/Weerberichten
+        // POST: api/Weer
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Weerbericht>> PostWeerbericht(Weerbericht weerbericht)
+        public async Task<ActionResult<Weer>> PostWeer(Weer weerbericht)
         {
             _context.Weerberichten.Add(weerbericht);
             await _context.SaveChangesAsync();
 
-            // return CreatedAtAction("GetWeerbericht", new { id = weerbericht.Id }, weerbericht);
-            return CreatedAtAction(nameof(GetWeerbericht), new { id = weerbericht.Id }, weerbericht);
+            return CreatedAtAction(nameof(GetWeer), new { id = weerbericht.Id }, weerbericht);
         }
 
-        // DELETE: api/Weerberichten/5
+        // DELETE: api/Weer/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteWeerbericht(long id)
+        public async Task<IActionResult> DeleteWeer(long id)
         {
             var weerbericht = await _context.Weerberichten.FindAsync(id);
             if (weerbericht == null)
@@ -100,7 +99,7 @@ namespace EducomOpdrachtAPI.Controllers
             return NoContent();
         }
 
-        private bool WeerberichtExists(long id)
+        private bool WeerExists(long id)
         {
             return _context.Weerberichten.Any(e => e.Id == id);
         }
