@@ -37,6 +37,12 @@ Data ophalen uit de feed met drie (twee) parameters.
 	- Einddatum van meetbaar periode? (optioneel, default van startdatum+7)
 Data opslaan in lokale MySQL database.
 
+Console app:
+	Haal data Buienradar op
+	Plaats data in lijst
+	Stuur lijst door naar API
+	API verwerkt data (POST/UPDATE)
+
 [Wat heb ik gedaan?]
 Nadat het project is aangemaakt, wordt automatisch een Swagger.io API opgezet.
 https://swagger.io is een gemakkelijkere manier om API's op te bouwen. Het maakt gebruik van de OpenAPI Specification (OAS).
