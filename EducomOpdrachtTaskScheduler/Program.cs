@@ -47,15 +47,57 @@ namespace EducomOpdrachtTaskScheduler
             int weerstationCount = parsedJson.SelectToken("buienradarnl.weergegevens.actueel_weer.weerstations").Value<JArray>("weerstation").Count;
             Console.WriteLine(weerstationCount.ToString() + " weerstations gevonden.");
 
+            // Loop dat alle data verwerkt en in lijsten stopt
             for (int count = 0; count < weerstationCount; count++)
             {
+                Console.WriteLine("----------");
+
                 Weerstation weerstation = new Weerstation();
                 weerstation.Id = parsedJson.SelectToken("buienradarnl.weergegevens.actueel_weer.weerstations.weerstation[" + count + "].stationcode").Value<long>();
-                Console.WriteLine(count.ToString() + " | " + weerstation.Id);
+                weerstation.Name = parsedJson.SelectToken("buienradarnl.weergegevens.actueel_weer.weerstations.weerstation[" + count + "].stationnaam.#text").Value<string>();
+                weerstation.Region = parsedJson.SelectToken("buienradarnl.weergegevens.actueel_weer.weerstations.weerstation[" + count + "].stationnaam.@regio").Value<string>();
+
+                Weerbericht weerbericht = new Weerbericht();
+                weerbericht.StationId = weerstation.Id;
+                weerbericht.Date = parsedJson.SelectToken("buienradarnl.weergegevens.actueel_weer.weerstations.weerstation[" + count + "].datum").Value<DateTime>();
+
+                // Niet alle weerstations hebben een thermometer, dus moet er een try/catch blok staan om de uitzonderingen op te vangen
+                try
+                {
+                    weerbericht.Temperature = (int)Math.Ceiling(parsedJson.SelectToken("buienradarnl.weergegevens.actueel_weer.weerstations.weerstation[" + count + "].temperatuurGC").Value<double>());
+                }
+                catch
+                {
+                    weerbericht.Temperature = -999;
+                } 
+
+                // Hetzelfde geldt voor de luchtvochtigheid en luchtdruk
+                try
+                {
+                    weerbericht.Humidity = parsedJson.SelectToken("buienradarnl.weergegevens.actueel_weer.weerstations.weerstation[" + count + "].luchtvochtigheid").Value<int>();
+                }
+                catch
+                {
+                    weerbericht.Humidity = -999;
+                }
+
+                try
+                {
+                    weerbericht.AirPressure = (int)Math.Ceiling(parsedJson.SelectToken("buienradarnl.weergegevens.actueel_weer.weerstations.weerstation[" + count + "].luchtdruk").Value<double>());
+                }
+                catch
+                {
+                    weerbericht.AirPressure = -999;
+                }
+
+                weerstations.Add(weerstation);
+                weerberichten.Add(weerbericht);
+
+                Console.WriteLine(count.ToString() + " | " + weerstation.Id + ": " + weerstation.Name + ", " + weerstation.Region);
+                Console.WriteLine(weerbericht.StationId.ToString() + " - Weer rondom " + weerbericht.Date.ToString() + ": " + weerbericht.Temperature.ToString() + "°C, luchtvochtigheid van " + weerbericht.Humidity.ToString() + " met een luchtdruk van " + weerbericht.AirPressure.ToString() );
             }
             
-
-            
+            // stuur door naar api 
 
             return string.Empty;
         }
