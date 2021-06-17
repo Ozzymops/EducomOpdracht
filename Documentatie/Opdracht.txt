@@ -56,6 +56,36 @@ call op de API doet om de database te updaten.
 Microsoft.EntityFrameworkCore - Apache-2.0 licentie
 	Microsoft.EntityFrameworkCore.InMemory - lokale opslag
 	Microsoft.EntityFrameworkCore.Design - nodig voor scaffolded Entity Framework controllers
-	Microsoft.EntityFrameworkCore.Abstractions - dependancy, 
-	Microsoft.EntityFrameworkCore.Analyzers - dependancy, 
-	Microsoft.EntityFrameworkCore.Relational - dependancy, 
+	Microsoft.EntityFrameworkCore.Abstractions - dependancy 
+	Microsoft.EntityFrameworkCore.Analyzers - dependancy 
+	Microsoft.EntityFrameworkCore.Relational - dependancy
+MySql.Data - GPLv2 licentie
+MySql.Data.EntityFramework - GPLv2 licentie
+
+[Documentatie]
+--Installatie--
+Installeer de dotnet hosting bundle installer: https://dotnet.microsoft.com/download/dotnet/thank-you/runtime-aspnetcore-5.0.4-windows-hosting-bundle-installer
+
+Installeer IIS
+	Windows + R, voer 'optionalfeatures' uit.
+	Klik op de checkbox voor Internet Information Services.
+	Open het mapje en ga naar World Wide Web-services, Toepassingontwikkelingsfuncties en klik op ASP, ASP.NET 3.5 en ASP.NET 4.8.
+	Klik op OK. Laat het installeren.
+	
+Zet IIS op
+	Open 'Beheer van IIS Services', klik met de rechtermuisknop op 'Sites' links, en klik op Website toevoegen.
+	Vul een sitenaam in, ik heb gekozen voor 'Educom Opdracht Site' en 'Educom Opdracht API'.
+	Kies een fysiek pad om de server in op te slaan.
+	Zet binding-type op https. Kies onderaan een SSL-certificaat (ik heb gekozen voor IIS Express Development Certificate).
+	Laat de rest van de instellingen met rust, klik op OK. Herhaal dit voor de API, maar zet dan de port één verder (444 ipv 443).
+	
+Exporteer projecten
+	Klik met de rechtermuisknop op EducomOpdracht rechts, en klik op Publish.
+	Kies als Target Folder. Selecteer als location de folder die je eerder hebt aangemaakt bij de IIS stap.
+	Klik op Finish. Klik op de volgende scherm op Publish.
+	Herhaal dit voor de API.
+	
+--Uitvoering--
+
+Voer 'dotnet dev-certs https --trust' uit in alle projecten:
+	Rechter muisknop op project, Open in Terminal. Onderaan opent een Developer PowerShell, voer bovenstaande command uit.

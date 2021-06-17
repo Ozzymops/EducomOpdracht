@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Net;
+using System.Net.Http;
 using System.Text;
 using EducomOpdrachtTaskScheduler.Models;
 using Newtonsoft.Json;
@@ -134,6 +135,9 @@ namespace EducomOpdrachtTaskScheduler
                 postWebRequest.ContentType = "application/json; charset=utf-8";
                 postWebRequest.Method = "POST";
 
+                // SSL certificate error fix
+                postWebRequest.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
+
                 // Authorisatie voor toegang tot POST methode in API
                 string encodedString = System.Convert.ToBase64String(Encoding.GetEncoding("ISO-8859-1").GetBytes(ConfigurationManager.AppSettings["consoleUsername"].ToString() + ":" + ConfigurationManager.AppSettings["consolePassword"].ToString()));
                 postWebRequest.Headers.Add("Authorization", "Basic " + encodedString);
@@ -162,7 +166,7 @@ namespace EducomOpdrachtTaskScheduler
             }
             catch (Exception e)
             {
-                Console.WriteLine(DateTime.Now.ToString() + " | Something went wrong: " + e.Message.ToString());
+                Console.WriteLine(DateTime.Now.ToString() + " | Something went wrong: " + e.ToString());
                 return false;
             }
             
