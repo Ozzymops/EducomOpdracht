@@ -77,18 +77,28 @@ namespace EducomOpdrachtAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Weerbericht>> PostWeerbericht(Weerbericht weerbericht)
         {
-            if (!_context.Weerberichten.Any(o => o.Date == weerbericht.Date && o.StationId == weerbericht.StationId))
+            // Authenticeer: alleen de console app mag toegang hebben tot POST en PUT
+            Authenticator auth = new Authenticator();
+            bool authenticated = auth.Authenticate(Request.Headers["Authorization"].ToString());
+
+            if (authenticated)
             {
-                _context.Weerberichten.Add(weerbericht);
-                await _context.SaveChangesAsync();
-            }
-            else
-            {
-                // Redirect to PUT
+                // Check of weerbericht al bestaat, zodat er geen duplicates komen
+                if (!_context.Weerberichten.Any(o => o.Id == weerbericht.Id))
+                {
+                    _context.Weerberichten.Add(weerbericht);
+                    await _context.SaveChangesAsync();
+                }
+                // Als weerstation al bestaat, update het via PUT methode
+                else
+                {
+                    // redirect to PUT
+                }
+
+                return CreatedAtAction(nameof(GetWeerbericht), new { id = weerbericht.Id }, weerbericht);
             }
 
-            // return CreatedAtAction("GetWeerbericht", new { id = weerbericht.Id }, weerbericht);
-            return CreatedAtAction(nameof(GetWeerbericht), new { id = weerbericht.Id }, weerbericht);
+            return NoContent();
         }
 
         // DELETE: api/Weerberichten/5

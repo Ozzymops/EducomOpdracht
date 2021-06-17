@@ -6,6 +6,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore;
 using EducomOpdrachtAPI.Models;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace EducomOpdrachtAPI
 {

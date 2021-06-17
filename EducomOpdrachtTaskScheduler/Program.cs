@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Net;
 using System.Text;
@@ -101,7 +102,11 @@ namespace EducomOpdrachtTaskScheduler
                 string weerstationJson = JsonConvert.SerializeObject(weerstation);
 
                 // Verwijs naar POST functie
-                DoPost(weerstationsUrl, weerstationJson);
+                if (!DoPost(weerstationsUrl, weerstationJson))
+                {
+                    Console.WriteLine(DateTime.Now.ToString() + " | Weatherstation operation aborted.");
+                    break;
+                }
             }
 
             foreach (Weerbericht weerbericht in weerberichten)
@@ -110,31 +115,57 @@ namespace EducomOpdrachtTaskScheduler
                 string weerberichtJson = JsonConvert.SerializeObject(weerbericht);
 
                 // Verwijs naar POST functie
-                DoPost(weerberichtenUrl, weerberichtJson);
+                if (!DoPost(weerberichtenUrl, weerberichtJson))
+                {
+                    Console.WriteLine(DateTime.Now.ToString() + " | Weather forecast operation aborted.");
+                    break;
+                }
             }
 
             return string.Empty;
         }
 
-        public static void DoPost(string url, string json)
+        public static bool DoPost(string url, string json)
         {
-            // POST functie richting API
-            HttpWebRequest postWebRequest = (HttpWebRequest)WebRequest.Create(url);
-            postWebRequest.ContentType = "application/json; charset=utf-8";
-            postWebRequest.Method = "POST";
-
-            using (StreamWriter streamWriter = new StreamWriter(postWebRequest.GetRequestStream()))
+            try
             {
-                streamWriter.Write(json);
-                streamWriter.Flush();
-            }
+                // POST functie richting API
+                HttpWebRequest postWebRequest = (HttpWebRequest)WebRequest.Create(url);
+                postWebRequest.ContentType = "application/json; charset=utf-8";
+                postWebRequest.Method = "POST";
 
-            HttpWebResponse postWebResponse = (HttpWebResponse)postWebRequest.GetResponse();
-            using (StreamReader postStreamReader = new StreamReader(postWebResponse.GetResponseStream()))
-            {
-                string response = postStreamReader.ReadToEnd();
-                Console.WriteLine(response);
+                // Authorisatie voor toegang tot POST methode in API
+                string encodedString = System.Convert.ToBase64String(Encoding.GetEncoding("ISO-8859-1").GetBytes(ConfigurationManager.AppSettings["consoleUsername"].ToString() + ":" + ConfigurationManager.AppSettings["consolePassword"].ToString()));
+                postWebRequest.Headers.Add("Authorization", "Basic " + encodedString);
+
+                using (StreamWriter streamWriter = new StreamWriter(postWebRequest.GetRequestStream()))
+                {
+                    streamWriter.Write(json);
+                    streamWriter.Flush();
+                }
+
+                HttpWebResponse postWebResponse = (HttpWebResponse)postWebRequest.GetResponse();
+                using (StreamReader postStreamReader = new StreamReader(postWebResponse.GetResponseStream()))
+                {
+                    string response = postStreamReader.ReadToEnd();
+                    if (response != null && response != string.Empty)
+                    {
+                        Console.WriteLine(response);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Operation failed, no authorisation.");
+                    }
+                }
+
+                return true;
             }
+            catch (Exception e)
+            {
+                Console.WriteLine(DateTime.Now.ToString() + " | Something went wrong: " + e.Message.ToString());
+                return false;
+            }
+            
         }
     }
 }
