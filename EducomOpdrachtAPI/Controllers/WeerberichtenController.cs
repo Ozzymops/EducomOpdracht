@@ -83,16 +83,31 @@ namespace EducomOpdrachtAPI.Controllers
 
             if (authenticated)
             {
-                // Check of weerbericht al bestaat, zodat er geen duplicates komen
-                if (!_context.Weerberichten.Any(o => o.Id == weerbericht.Id))
+                // Weerstation bericht
+                if (weerbericht.StationId != -1)
                 {
-                    _context.Weerberichten.Add(weerbericht);
-                    await _context.SaveChangesAsync();
+                    if (!_context.Weerberichten.Any(o => o.StationId == weerbericht.StationId && o.Date == weerbericht.Date))
+                    {
+                        _context.Weerberichten.Add(weerbericht);
+                        await _context.SaveChangesAsync();
+                    }
+                    else
+                    {
+                        // redirect to PUT
+                    }
                 }
-                // Als weerstation al bestaat, update het via PUT methode
+                // Meerdaagse bericht
                 else
                 {
-                    // redirect to PUT
+                    if (!_context.Weerberichten.Any(o => o.Id == weerbericht.Id && o.Date == weerbericht.Date))
+                    {
+                        _context.Weerberichten.Add(weerbericht);
+                        await _context.SaveChangesAsync();
+                    }
+                    else
+                    {
+                        // redirect to PUT
+                    }
                 }
 
                 return CreatedAtAction(nameof(GetWeerbericht), new { id = weerbericht.Id }, weerbericht);

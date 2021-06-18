@@ -42,6 +42,11 @@ Console app:
 	Plaats data in lijst
 	Stuur lijst door naar API
 	API verwerkt data (POST/UPDATE)
+	
+Database (MySql/SQL?)
+	Database script voor wat filler informatie voor website (placeholder)
+Vorige/volgende dagen Buienradar data, niet alleen vandaag
+Optimaliseren POST loop console app
 
 [Wat heb ik gedaan?]
 Nadat het project is aangemaakt, wordt automatisch een Swagger.io API opgezet.
@@ -86,6 +91,3 @@ Exporteer projecten
 	Herhaal dit voor de API.
 	
 --Uitvoering--
-
-Voer 'dotnet dev-certs https --trust' uit in alle projecten:
-	Rechter muisknop op project, Open in Terminal. Onderaan opent een Developer PowerShell, voer bovenstaande command uit.

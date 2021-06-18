@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Net;
-using System.Net.Http;
 using System.Text;
+using System.Threading;
 using EducomOpdrachtTaskScheduler.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -18,8 +18,8 @@ namespace EducomOpdrachtTaskScheduler
             // API URL om uit te voeren, in dit geval de update database functie.
             Console.WriteLine(DateTime.Now.ToString() + " | Console application started.");
             string result = UpdateDatabase(System.Configuration.ConfigurationManager.AppSettings["weerstationsUrl"], System.Configuration.ConfigurationManager.AppSettings["weerberichtenUrl"], System.Configuration.ConfigurationManager.AppSettings["buienradarUrl"]);
-            Console.WriteLine(DateTime.Now.ToString() + " | Finished, press any key to end application...");
-            Console.Read(); // verwijder later, alleen voor debug
+            Console.WriteLine(DateTime.Now.ToString() + " | Finished, console will close in 5 seconds...");
+            Thread.Sleep(5000);
         }
 
         public static string UpdateDatabase(string weerstationsUrl, string weerberichtenUrl, string buienradarUrl)
@@ -48,52 +48,61 @@ namespace EducomOpdrachtTaskScheduler
             JObject parsedJson = JObject.Parse(json);
             int weerstationCount = parsedJson.SelectToken("buienradarnl.weergegevens.actueel_weer.weerstations").Value<JArray>("weerstation").Count;
 
-            Console.WriteLine(DateTime.Now.ToString() + " | Processing " + weerstationCount.ToString() + " results...");
+            Console.WriteLine(DateTime.Now.ToString() + " | Processing " + weerstationCount.ToString() + " weather stations...");
 
             // Loop dat alle data verwerkt en in lijsten stopt
+            #region Weerstation weerberichten actueel
             for (int count = 0; count < weerstationCount; count++)
             {
-                Weerstation weerstation = new Weerstation();
-                weerstation.Id = parsedJson.SelectToken("buienradarnl.weergegevens.actueel_weer.weerstations.weerstation[" + count + "].stationcode").Value<long>();
-                weerstation.Name = parsedJson.SelectToken("buienradarnl.weergegevens.actueel_weer.weerstations.weerstation[" + count + "].stationnaam.#text").Value<string>();
-                weerstation.Region = parsedJson.SelectToken("buienradarnl.weergegevens.actueel_weer.weerstations.weerstation[" + count + "].stationnaam.@regio").Value<string>();
+                string weerstationChain = "buienradarnl.weergegevens.actueel_weer.weerstations.weerstation[" + count.ToString() + "]";
+                Weerstation weerstation = new Weerstation(parsedJson.SelectToken(weerstationChain + ".stationcode").Value<long>(),
+                    parsedJson.SelectToken(weerstationChain + ".stationnaam.@regio").Value<string>(),
+                    parsedJson.SelectToken(weerstationChain + ".stationnaam.#text").Value<string>());
 
-                Weerbericht weerbericht = new Weerbericht();
-                weerbericht.StationId = weerstation.Id;
-                weerbericht.Date = parsedJson.SelectToken("buienradarnl.weergegevens.actueel_weer.weerstations.weerstation[" + count + "].datum").Value<DateTime>();
-
-                // Niet alle weerstations hebben een thermometer, dus moet er een try/catch blok staan om de uitzonderingen op te vangen
-                try
-                {
-                    weerbericht.Temperature = (int)Math.Ceiling(parsedJson.SelectToken("buienradarnl.weergegevens.actueel_weer.weerstations.weerstation[" + count + "].temperatuurGC").Value<double>());
-                }
-                catch
-                {
-                    weerbericht.Temperature = -999;
-                } 
-
-                // Hetzelfde geldt voor de luchtvochtigheid en luchtdruk
-                try
-                {
-                    weerbericht.Humidity = parsedJson.SelectToken("buienradarnl.weergegevens.actueel_weer.weerstations.weerstation[" + count + "].luchtvochtigheid").Value<int>();
-                }
-                catch
-                {
-                    weerbericht.Humidity = -999;
-                }
+                int tempTemperature;
+                int tempHumidity;
+                int tempAirPressure;
 
                 try
                 {
-                    weerbericht.AirPressure = (int)Math.Ceiling(parsedJson.SelectToken("buienradarnl.weergegevens.actueel_weer.weerstations.weerstation[" + count + "].luchtdruk").Value<double>());
+                    tempTemperature = (int)Math.Ceiling(parsedJson.SelectToken(weerstationChain + ".temperatuurGC").Value<double>());
+                    tempHumidity = parsedJson.SelectToken(weerstationChain + ".luchtvochtigheid").Value<int>();
+                    tempAirPressure = (int)Math.Ceiling(parsedJson.SelectToken(weerstationChain + "luchtdruk").Value<double>());
                 }
                 catch
                 {
-                    weerbericht.AirPressure = -999;
+                    tempTemperature = -999;
+                    tempHumidity = -999;
+                    tempAirPressure = -999;
                 }
+
+                Weerbericht weerbericht = new Weerbericht(parsedJson.SelectToken(weerstationChain + ".datum").Value<DateTime>(),
+                    weerstation.Id,
+                    tempTemperature,
+                    tempHumidity,
+                    tempAirPressure);
 
                 weerstations.Add(weerstation);
                 weerberichten.Add(weerbericht);
             }
+            #endregion
+
+            #region Weerbericht 5-daags
+            Console.WriteLine(DateTime.Now.ToString() + " | Processing forecast of +5 days...");
+
+            // Haalt data op voor de meerdaagse verwachting
+            for (int meerdaagseCount = 1; meerdaagseCount < 6; meerdaagseCount++)
+            {
+                string weerberichtChain = "buienradarnl.weergegevens.verwachting_meerdaags.dag-plus" + meerdaagseCount.ToString();
+                Weerbericht weerbericht = new Weerbericht(DateTime.Parse(parsedJson.SelectToken(weerberichtChain + ".datum").Value<string>(), new System.Globalization.CultureInfo("nl-NL")),
+                    parsedJson.SelectToken(weerberichtChain + ".maxtemp").Value<int>(),
+                    parsedJson.SelectToken(weerberichtChain + ".mintemp").Value<int>(),
+                    parsedJson.SelectToken(weerberichtChain + ".kansregen").Value<int>(),
+                    parsedJson.SelectToken(weerberichtChain + ".kanszon").Value<int>());
+
+                weerberichten.Add(weerbericht);
+            }
+            #endregion
 
             // (misschien bad practice? maar werkt voor nu)
             // Loop door de lijst en voer POST functies uit
