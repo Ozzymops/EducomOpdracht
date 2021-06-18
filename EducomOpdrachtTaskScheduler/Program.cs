@@ -63,18 +63,34 @@ namespace EducomOpdrachtTaskScheduler
                 int tempHumidity;
                 int tempAirPressure;
 
+                #region Try/catch voor temperatuur, luchtvochtigheid en luchtdruk
                 try
                 {
-                    tempTemperature = (int)Math.Ceiling(parsedJson.SelectToken(weerstationChain + ".temperatuurGC").Value<double>());
+                    tempTemperature = (int)Math.Ceiling(parsedJson.SelectToken(weerstationChain + ".temperatuurGC").Value<double>());                                       
+                }
+                catch
+                {
+                    tempTemperature = -999;                                     
+                }
+
+                try
+                {
                     tempHumidity = parsedJson.SelectToken(weerstationChain + ".luchtvochtigheid").Value<int>();
+                }
+                catch
+                {
+                    tempHumidity = -999;
+                }
+
+                try
+                {
                     tempAirPressure = (int)Math.Ceiling(parsedJson.SelectToken(weerstationChain + "luchtdruk").Value<double>());
                 }
                 catch
                 {
-                    tempTemperature = -999;
-                    tempHumidity = -999;
                     tempAirPressure = -999;
                 }
+                #endregion
 
                 Weerbericht weerbericht = new Weerbericht(parsedJson.SelectToken(weerstationChain + ".datum").Value<DateTime>(),
                     weerstation.Id,

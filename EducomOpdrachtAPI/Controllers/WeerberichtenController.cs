@@ -51,6 +51,13 @@ namespace EducomOpdrachtAPI.Controllers
                 return BadRequest();
             }
 
+            var local = _context.Set<Weerbericht>().Local.FirstOrDefault(o => o.Id.Equals(id));
+
+            if (local != null)
+            {
+                _context.Entry(local).State = EntityState.Detached;
+            }
+
             _context.Entry(weerbericht).State = EntityState.Modified;
 
             try
@@ -93,20 +100,25 @@ namespace EducomOpdrachtAPI.Controllers
                     }
                     else
                     {
-                        // redirect to PUT
+                        // Haal ID op van bestaand weerbericht
+                        long id = _context.Weerberichten.First(o => o.StationId == weerbericht.StationId && o.Date == weerbericht.Date).Id;
+                        weerbericht.Id = id;
+                        await PutWeerbericht(id, weerbericht);
                     }
                 }
                 // Meerdaagse bericht
                 else
                 {
-                    if (!_context.Weerberichten.Any(o => o.Id == weerbericht.Id && o.Date == weerbericht.Date))
+                    if (!_context.Weerberichten.Any(o => o.Date == weerbericht.Date))
                     {
                         _context.Weerberichten.Add(weerbericht);
                         await _context.SaveChangesAsync();
                     }
                     else
                     {
-                        // redirect to PUT
+                        long id = _context.Weerberichten.First(o => o.Date == weerbericht.Date).Id;
+                        weerbericht.Id = id;
+                        await PutWeerbericht(id, weerbericht);
                     }
                 }
 
