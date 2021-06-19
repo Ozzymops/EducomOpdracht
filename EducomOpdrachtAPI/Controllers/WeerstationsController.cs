@@ -50,6 +50,13 @@ namespace EducomOpdrachtAPI.Controllers
                 return BadRequest();
             }
 
+            var local = _context.Set<Weerbericht>().Local.FirstOrDefault(o => o.Id.Equals((int)id));
+
+            if (local != null)
+            {
+                _context.Entry(local).State = EntityState.Detached;
+            }
+
             _context.Entry(weerstation).State = EntityState.Modified;
 
             try
@@ -82,16 +89,16 @@ namespace EducomOpdrachtAPI.Controllers
 
             if (authenticated)
             {
-                // Check of weerstation al bestaat, zodat er geen duplicates komen
-                if (!_context.Weerstations.Any(o => o.Id == weerstation.Id))
+                if (!_context.Weerstations.Any(o => o.StationId == weerstation.StationId && o.Date == weerstation.Date))
                 {
                     _context.Weerstations.Add(weerstation);
                     await _context.SaveChangesAsync();
                 }
-                // Als weerstation al bestaat, update het via PUT methode
                 else
                 {
-                    // redirect to PUT
+                    int id = _context.Weerstations.First(o => o.StationId == weerstation.StationId && o.Date == weerstation.Date).Id;
+                    weerstation.Id = id;
+                    await PutWeerstation((long)id, weerstation);
                 }
 
                 return CreatedAtAction(nameof(GetWeerstation), new { id = weerstation.Id }, weerstation);
@@ -112,6 +119,30 @@ namespace EducomOpdrachtAPI.Controllers
 
             _context.Weerstations.Remove(weerstation);
             await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        // DELETE: api/Weerstations
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpDelete]
+        public async Task<ActionResult<Weerstation>> DeleteAllWeerstation()
+        {
+            // Authenticeer: alleen de console app mag toegang hebben tot POST en PUT
+            Authenticator auth = new Authenticator();
+            bool authenticated = auth.Authenticate(Request.Headers["Authorization"].ToString());
+
+            if (authenticated)
+            {
+                var weerstationList = await _context.Weerstations.ToListAsync();
+
+                foreach (Weerstation weerstation in weerstationList)
+                {
+                    _context.Weerstations.Remove(weerstation);
+                }
+
+                await _context.SaveChangesAsync();
+            }
 
             return NoContent();
         }

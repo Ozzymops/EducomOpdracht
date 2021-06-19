@@ -125,6 +125,30 @@ namespace EducomOpdrachtAPI.Controllers
             return NoContent();
         }
 
+        // DELETE: api/Weerstations
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpDelete]
+        public async Task<ActionResult<Weerbericht>> DeleteAllWeerbericht()
+        {
+            // Authenticeer: alleen de console app mag toegang hebben tot POST en PUT
+            Authenticator auth = new Authenticator();
+            bool authenticated = auth.Authenticate(Request.Headers["Authorization"].ToString());
+
+            if (authenticated)
+            {
+                var weerberichtList = await _context.Weerberichten.ToListAsync();
+
+                foreach (Weerbericht weerbericht in weerberichtList)
+                {
+                    _context.Weerberichten.Remove(weerbericht);
+                }
+
+                await _context.SaveChangesAsync();
+            }
+
+            return NoContent();
+        }
+
         private bool WeerberichtExists(long id)
         {
             return _context.Weerberichten.Any(e => e.Id == id);

@@ -60,6 +60,13 @@ of iets anders te doen, waardoor de Task niet wordt uitgevoerd. Het is dus erg o
 Daarom kies ik ervoor om via Windows Scheduler een klein console applicatie (EducomOpdrachtScheduledTask) periodiek uit te voeren, die een
 call op de API doet om de database te updaten.
 
+
+Package Manager Console:
+Add-Migration Initial -Context WeerberichtContext
+Add-Migration Initial -Context WeerstationContext
+Update-Database -Context WeerberichtContext
+Update-Database -Context WeerstationContext
+
 [NuGet]
 Microsoft.EntityFrameworkCore - Apache-2.0 licentie
 	Microsoft.EntityFrameworkCore.InMemory - lokale opslag
