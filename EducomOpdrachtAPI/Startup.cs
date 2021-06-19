@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore;
-using EducomOpdrachtAPI.Models;
+using EducomOpdrachtAPI.DAL;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace EducomOpdrachtAPI

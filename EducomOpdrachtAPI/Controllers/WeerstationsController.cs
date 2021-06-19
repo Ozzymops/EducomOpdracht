@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using EducomOpdrachtAPI.DAL;
 using EducomOpdrachtAPI.Models;
 
 namespace EducomOpdrachtAPI.Controllers

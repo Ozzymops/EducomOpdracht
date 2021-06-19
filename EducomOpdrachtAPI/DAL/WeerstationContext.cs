@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using EducomOpdrachtAPI.Models;
 
-namespace EducomOpdrachtAPI.Models
+namespace EducomOpdrachtAPI.DAL
 {
     /// <summary>
     /// Database context voor weerberichten. Dit is nodig om data op te kunnen slaan en op te kunnen halen vanuit een lokale database.
