@@ -48,6 +48,9 @@ Database (MySql/SQL?)
 Vorige/volgende dagen Buienradar data, niet alleen vandaag
 Optimaliseren POST loop console app
 
+Site:
+	haal oudste en nieuwste op voor max en min tijdsperiode
+
 [Wat heb ik gedaan?]
 Nadat het project is aangemaakt, wordt automatisch een Swagger.io API opgezet.
 https://swagger.io is een gemakkelijkere manier om API's op te bouwen. Het maakt gebruik van de OpenAPI Specification (OAS).
@@ -71,6 +74,17 @@ MySql.Data.EntityFramework - GPLv2 licentie
 --Installatie--
 Installeer de dotnet hosting bundle installer: https://dotnet.microsoft.com/download/dotnet/thank-you/runtime-aspnetcore-5.0.4-windows-hosting-bundle-installer
 
+SQL Express 2019 Database
+	Download en installeer https://www.microsoft.com/en-us/Download/details.aspx?id=101064.	Pak de Basic profiel.
+	Laat alle instellingen standaard staan (behalve misschien installatiefolder).
+	Klik op het eind op Connect Now om te testen of het werkt. Een CMD venster springt op. Als het goed werkt, staat er iets van '1 row affected'.
+	Klik daarna op Install SSMS, download en installeer deze ook: https://aka.ms/ssmsfullsetup.
+	
+Zet SQL op
+	Windows + R, voer 'Ssms' uit.
+	Connect met de (als goed is) voor ingestelde Server name: #COMPUTER\SQLEXPRESS via Windows Authentication.
+	
+	
 Installeer IIS
 	Windows + R, voer 'optionalfeatures' uit.
 	Klik op de checkbox voor Internet Information Services.
@@ -78,7 +92,8 @@ Installeer IIS
 	Klik op OK. Laat het installeren.
 	
 Zet IIS op
-	Open 'Beheer van IIS Services', klik met de rechtermuisknop op 'Sites' links, en klik op Website toevoegen.
+	Windows + R, voer 'InetMgr' uit.
+	Klik met de rechtermuisknop op 'Sites' links, en klik op Website toevoegen.
 	Vul een sitenaam in, ik heb gekozen voor 'Educom Opdracht Site' en 'Educom Opdracht API'.
 	Kies een fysiek pad om de server in op te slaan.
 	Zet binding-type op https. Kies onderaan een SSL-certificaat (ik heb gekozen voor IIS Express Development Certificate).
@@ -90,4 +105,20 @@ Exporteer projecten
 	Klik op Finish. Klik op de volgende scherm op Publish.
 	Herhaal dit voor de API.
 	
+Opzetten Console applicatie
+	Build de console applicatie als een Release build.
+	Ga naar de opslag folder voor de console applicatie en plaats dit op een veilige, permanente plek.
+	
 --Uitvoering--
+Configuratie
+	Check of de configuratie van de console app (EducomOpdrachtTaskScheduler.dll.config) op de juiste URLs staan: https://localhost:444/api/Weerstations en https://localhost:444/api/Weerberichten.
+	De port is (als je dit niet aangepast hebt) 444 voor de API.
+	Check ook of de username en password matchen met die van de config van de API (app.config). Deze zijn bij default 'externalConsoleApp' en 'externalConsoleAppPassword'.
+	---
+	Check de configuratie van de API (appsettings.json) en kijk na of de connection string overeen komt met onderstaand:
+	Server=localhost\SQLEXPRESS;Database=EducomOpdracht;Trusted_Connection=True;
+	Zorg dat er niet één \ staat, maar twee \\! Anders ziet de code het als een break, en wordt het niet uitgevoerd.
+
+IIS
+	Check of beide toepassingsgroepen van beide de site en API lopen. Zo niet, start deze.
+	Hetzelfde voor de site en API zelf, check of deze lopen. Zo niet, start deze.

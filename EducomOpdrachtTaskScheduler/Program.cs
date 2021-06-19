@@ -54,10 +54,8 @@ namespace EducomOpdrachtTaskScheduler
             #region Weerstation weerberichten actueel
             for (int count = 0; count < weerstationCount; count++)
             {
+                // Weerstation
                 string weerstationChain = "buienradarnl.weergegevens.actueel_weer.weerstations.weerstation[" + count.ToString() + "]";
-                Weerstation weerstation = new Weerstation(parsedJson.SelectToken(weerstationChain + ".stationcode").Value<long>(),
-                    parsedJson.SelectToken(weerstationChain + ".stationnaam.@regio").Value<string>(),
-                    parsedJson.SelectToken(weerstationChain + ".stationnaam.#text").Value<string>());
 
                 int tempTemperature;
                 int tempHumidity;
@@ -92,14 +90,15 @@ namespace EducomOpdrachtTaskScheduler
                 }
                 #endregion
 
-                Weerbericht weerbericht = new Weerbericht(parsedJson.SelectToken(weerstationChain + ".datum").Value<DateTime>(),
-                    weerstation.Id,
+                Weerstation weerstation = new Weerstation(parsedJson.SelectToken(weerstationChain + ".stationcode").Value<long>(),
+                    parsedJson.SelectToken(weerstationChain + ".datum").Value<DateTime>(),
+                    parsedJson.SelectToken(weerstationChain + ".stationnaam.@regio").Value<string>(),
+                    parsedJson.SelectToken(weerstationChain + ".stationnaam.#text").Value<string>(),
                     tempTemperature,
                     tempHumidity,
                     tempAirPressure);
 
                 weerstations.Add(weerstation);
-                weerberichten.Add(weerbericht);
             }
             #endregion
 

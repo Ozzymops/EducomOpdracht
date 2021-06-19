@@ -51,7 +51,7 @@ namespace EducomOpdrachtAPI.Controllers
                 return BadRequest();
             }
 
-            var local = _context.Set<Weerbericht>().Local.FirstOrDefault(o => o.Id.Equals(id));
+            var local = _context.Set<Weerbericht>().Local.FirstOrDefault(o => o.Id.Equals((int)id));
 
             if (local != null)
             {
@@ -90,36 +90,16 @@ namespace EducomOpdrachtAPI.Controllers
 
             if (authenticated)
             {
-                // Weerstation bericht
-                if (weerbericht.StationId != -1)
+                if (!_context.Weerberichten.Any(o => o.Date == weerbericht.Date))
                 {
-                    if (!_context.Weerberichten.Any(o => o.StationId == weerbericht.StationId && o.Date == weerbericht.Date))
-                    {
-                        _context.Weerberichten.Add(weerbericht);
-                        await _context.SaveChangesAsync();
-                    }
-                    else
-                    {
-                        // Haal ID op van bestaand weerbericht
-                        long id = _context.Weerberichten.First(o => o.StationId == weerbericht.StationId && o.Date == weerbericht.Date).Id;
-                        weerbericht.Id = id;
-                        await PutWeerbericht(id, weerbericht);
-                    }
+                    _context.Weerberichten.Add(weerbericht);
+                    await _context.SaveChangesAsync();
                 }
-                // Meerdaagse bericht
                 else
                 {
-                    if (!_context.Weerberichten.Any(o => o.Date == weerbericht.Date))
-                    {
-                        _context.Weerberichten.Add(weerbericht);
-                        await _context.SaveChangesAsync();
-                    }
-                    else
-                    {
-                        long id = _context.Weerberichten.First(o => o.Date == weerbericht.Date).Id;
-                        weerbericht.Id = id;
-                        await PutWeerbericht(id, weerbericht);
-                    }
+                    int id = _context.Weerberichten.First(o => o.Date == weerbericht.Date).Id;
+                    weerbericht.Id = id;
+                    await PutWeerbericht((long)id, weerbericht);
                 }
 
                 return CreatedAtAction(nameof(GetWeerbericht), new { id = weerbericht.Id }, weerbericht);

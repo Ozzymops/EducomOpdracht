@@ -5,12 +5,15 @@ namespace EducomOpdrachtAPI.Models
     public class Weerstation
     {
         /// <summary>
-        /// Een entry in de database.
-        /// Weerstation vanuit https://data.buienradar.nl/1.1/feed/json opgehaald. Opgeslagen data bestaat uit station id, stationregio en stationnaam.
-        /// Wordt gebruikt voor een dropdown menu in de andere applicatie.
+        /// Weerstation vanuit https://data.buienradar.nl/1.1/feed/json opgehaald. Actuele data per weerstation.
         /// </summary>
-        public long Id { get; set; }
+        public int Id { get; set; }
+        public long StationId { get; set; }
+        public DateTime Date { get; set; }
         public string Region { get; set; }
         public string Name { get; set; }
+        public int Temperature { get; set; }
+        public int Humidity { get; set; }
+        public int AirPressure { get; set; }
     }
 }
