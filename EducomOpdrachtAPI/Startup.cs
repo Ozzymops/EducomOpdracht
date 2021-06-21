@@ -24,9 +24,9 @@ namespace EducomOpdrachtAPI
         {
             // Registratie van database context als service
             //services.AddDbContext<WeerstationContext>(opt => opt.UseInMemoryDatabase("Weerstations"));
-            services.AddDbContext<WeerstationContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("LocalDbConnection")));
+            services.AddDbContext<WeerstationContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("SqlConnection")));
             //services.AddDbContext<WeerberichtContext>(opt => opt.UseInMemoryDatabase("Weerberichten"));
-            services.AddDbContext<WeerberichtContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("LocalDbConnection")));
+            services.AddDbContext<WeerberichtContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("SqlConnection")));
 
             services.AddControllers();
         }

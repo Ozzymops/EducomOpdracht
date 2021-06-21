@@ -89,7 +89,8 @@ SQL Express 2019 Database
 	
 Zet SQL op
 	Windows + R, voer 'Ssms' uit.
-	Connect met de (als goed is) voor ingestelde Server name: #COMPUTER\SQLEXPRESS via Windows Authentication.
+	Connect met: [Computer naam]\SQLEXPRESS via Windows Authentication, deze staat waarschijnlijk al standaard ingevuld.
+	Creëer een database met de naam EducomOpdrachtAPI.
 	
 	
 Installeer IIS
@@ -105,6 +106,15 @@ Zet IIS op
 	Kies een fysiek pad om de server in op te slaan.
 	Zet binding-type op https. Kies onderaan een SSL-certificaat (ik heb gekozen voor IIS Express Development Certificate).
 	Laat de rest van de instellingen met rust, klik op OK. Herhaal dit voor de API, maar zet dan de port één verder (444 ipv 443).
+	
+Zet database op
+	Open het API project, en open de Package Manager Console.
+	Vul de volgende commando's in:
+		Add-Migration Initial -Context WeerberichtContext
+		Add-Migration Initial -Context WeerstationContext
+		Update-Database -Context WeerberichtContext
+		Update-Database -Context WeerstationContext
+	Dit bouwt de database op met de modellen binnenin de API.
 	
 Exporteer projecten
 	Klik met de rechtermuisknop op EducomOpdracht rechts, en klik op Publish.
