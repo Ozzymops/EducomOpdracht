@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using EducomOpdrachtAPI.DAL;
 using EducomOpdrachtAPI.Models;
+using System;
 
 namespace EducomOpdrachtAPI.Controllers
 {
@@ -38,6 +39,60 @@ namespace EducomOpdrachtAPI.Controllers
             }
 
             return weerstation;
+        }
+
+        // GET: api/Weerstations/bydate/startPeriod/endPeriod
+        // Voor bijgegeven eindperiode
+        [HttpGet("bydate/{stationId}/{startPeriod}/{endPeriod}")]
+        public async Task<ActionResult<IEnumerable<Weerstation>>> GetWeerstationWithEnd(long stationId, string startPeriod, string endPeriod)
+        {
+            DateTime startPeriodDate = DateTime.Parse(startPeriod);
+            DateTime endPeriodDate = DateTime.Parse(endPeriod);
+
+            List<Weerstation> weerstations = new List<Weerstation>();
+
+            try
+            {
+                weerstations = await _context.Weerstations.Where(o => o.StationId == stationId && o.Date >= startPeriodDate && o.Date <= endPeriodDate).ToListAsync();
+            }
+            catch
+            {
+                return NotFound();
+            }
+
+            if (weerstations.Count == 0)
+            {
+                return NotFound();
+            }
+
+            return weerstations;
+        }
+
+        // GET: api/Weerstations/bydate/startperiod
+        // Voor standaard +5 dagen eindperiode (zeven dagen is onmogelijk, buienradar heeft maar informatie tot op vijf dagen vooruit)
+        [HttpGet("bydate/{stationId}/{startPeriod}")]
+        public async Task<ActionResult<IEnumerable<Weerstation>>> GetWeerstationWithoutEnd(long stationId, string startPeriod)
+        {
+            DateTime startPeriodDate = DateTime.Parse(startPeriod);
+            DateTime endPeriodDate = startPeriodDate.AddDays(7);
+
+            List<Weerstation> weerstations = new List<Weerstation>();
+
+            try
+            {
+                weerstations = await _context.Weerstations.Where(o => o.StationId == stationId && o.Date >= startPeriodDate && o.Date <= endPeriodDate).ToListAsync();
+            }
+            catch
+            {
+                return NotFound();
+            }
+
+            if (weerstations.Count == 0)
+            {
+                return NotFound();
+            }
+
+            return weerstations;
         }
 
         // PUT: api/Weerstations/5

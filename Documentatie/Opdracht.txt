@@ -60,6 +60,8 @@ of iets anders te doen, waardoor de Task niet wordt uitgevoerd. Het is dus erg o
 Daarom kies ik ervoor om via Windows Scheduler een klein console applicatie (EducomOpdrachtScheduledTask) periodiek uit te voeren, die een
 call op de API doet om de database te updaten.
 
+Ik heb niet volledig conform de opdracht kunnen werken, want Buienradar linkt geen weerstations aan toekomstige weerberichten (waardoor de eerste mogelijke parameter al nutteloos is).
+Als alternatief sla ik de data van weerstations op dat elk uur wordt opgenomen door de console applicatie op, en krijgen die een aparte categorie gesplitst van de toekomstige weerberichten.
 
 Package Manager Console:
 Add-Migration Initial -Context WeerberichtContext

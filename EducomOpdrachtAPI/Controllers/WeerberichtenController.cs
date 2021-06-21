@@ -42,6 +42,60 @@ namespace EducomOpdrachtAPI.Controllers
             return weerbericht;
         }
 
+        // GET: api/Weerberichten/bydate/startPeriod/endPeriod
+        // Voor bijgegeven eindperiode
+        [HttpGet("bydate/{startPeriod}/{endPeriod}")]
+        public async Task<ActionResult<IEnumerable<Weerbericht>>> GetWeerberichtWithEnd(string startPeriod, string endPeriod)
+        {
+            DateTime startPeriodDate = DateTime.Parse(startPeriod);
+            DateTime endPeriodDate = DateTime.Parse(endPeriod);
+
+            List<Weerbericht> weerberichten = new List<Weerbericht>();
+
+            try
+            {
+                weerberichten = await _context.Weerberichten.Where(o => o.Date >= startPeriodDate && o.Date <= endPeriodDate).ToListAsync();
+            }
+            catch
+            {
+                return NotFound();
+            }
+
+            if (weerberichten.Count == 0)
+            {
+                return NotFound();
+            }
+
+            return weerberichten;
+        }
+
+        // GET: api/Weerberichten/bydate/startperiod
+        // Voor standaard +5 dagen eindperiode (zeven dagen is onmogelijk, buienradar heeft maar informatie tot op vijf dagen vooruit)
+        [HttpGet("bydate/{startPeriod}")]
+        public async Task<ActionResult<IEnumerable<Weerbericht>>> GetWeerberichtWithoutEnd(string startPeriod)
+        {
+            DateTime startPeriodDate = DateTime.Parse(startPeriod);
+            DateTime endPeriodDate = startPeriodDate.AddDays(7);
+
+            List<Weerbericht> weerberichten = new List<Weerbericht>();
+
+            try
+            {
+                weerberichten = await _context.Weerberichten.Where(o => o.Date >= startPeriodDate && o.Date <= endPeriodDate).ToListAsync();
+            }
+            catch
+            {
+                return NotFound();
+            }
+
+            if (weerberichten.Count == 0)
+            {
+                return NotFound();
+            }
+
+            return weerberichten;
+        }
+
         // PUT: api/Weerberichten/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
