@@ -7,16 +7,34 @@
 </head>
 <div class="text-center">
     <div>
-        <p>Type: @Html.RadioButtonFor(model => model.graphType, 0, new { @checked = "checked" }) Station status | @Html.RadioButtonFor(model => model.graphType, 1) Meerdaags weerbericht</p>
-        <!-- alleen als graphType 0 -->
-        <p>Weerstation: </p>
-        <p>Datumrange: @Html.EditorFor(model => model.startPeriod) tot @Html.EditorFor(model => model.endPeriod)</p>
-        <p>Filters:</p>
+        @using (Html.BeginForm())
+        {
+            <p>Type: @Html.RadioButtonFor(model => model.graphType, 0, new { @checked = "checked" }) Station status | @Html.RadioButtonFor(model => model.graphType, 1) Meerdaags weerbericht</p>
+            @if (Model.graphType == 0)
+            {
+                <p>Weerstation: @Html.DropDownListFor(model => model.selectedListValue, Model.weerstationList, "--Kies een weerstation--", new { @class = "form-control" })</p>
+                <p>Datumrange: @Html.EditorFor(model => model.startPeriod) tot @Html.EditorFor(model => model.endPeriod)</p>
+                <p>Filters:</p>
+            }
+            else
+            {
 
-        <p></p>
-
-        <!-- alleen als graphType 1 -->
-        <p></p>
+            }
+            <div class="form-group ">
+                <input type="submit" value="Submit" class="btn btn-primary" />
+            </div>
+        }
+    </div>
+    <div>
+        <!-- grafiek -->
+        @if (Model.selectedWeerstations.Count > 0)
+            {
+                <p>Geselecteerd weerstation is @Model.selectedWeerstations[0].Name met id @Model.selectedWeerstations[0].StationId met @Model.selectedWeerstations.Count entries.</p>
+                @foreach(Weerstation weerstation in Model.selectedWeerstations)
+                {
+                    <p>@weerstation.Date.ToString("MMMM dd, yyyy - HH:mm"): @weerstation.TemperatureGc graden celsius, @weerstation.TemperatureCm graden celsius op 10cm hoogte.</p>
+                }
+            } 
     </div>
 </div>
 <script>

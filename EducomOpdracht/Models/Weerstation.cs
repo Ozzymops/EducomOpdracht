@@ -22,5 +22,22 @@ namespace EducomOpdracht.Models
         // Overig
         public int Humidity { get; set; }           // relatieve luchtvochtigheid in %
         public double AirPressure { get; set; }     // luchtdruk in hectopascal (hPa), ook wel millibar
+
+        public Weerstation(long stationId, DateTime date, string region, string name, double temperatureGc, double temperatureCm, double windspeedMs, int windspeedBf, int humidity, double airPressure)
+        {
+            this.StationId = stationId;
+            this.Date = date;
+            this.Region = region;
+            this.Name = name;
+
+            this.TemperatureGc = temperatureGc;
+            this.TemperatureCm = temperatureCm;
+
+            this.WindspeedMs = windspeedMs;
+            this.WindspeedBf = windspeedBf;
+
+            this.Humidity = humidity;
+            this.AirPressure = airPressure;
+        }
     }
 }
