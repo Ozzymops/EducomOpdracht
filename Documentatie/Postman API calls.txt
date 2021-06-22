@@ -1,3 +1,6 @@
+Authorisation: Basic Auth | externalConsoleApp / externalConsoleAppPassword 
+Body: raw | JSON
+
 [GET]
 
 [POST]

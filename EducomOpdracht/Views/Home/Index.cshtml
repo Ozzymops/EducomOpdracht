@@ -1,8 +1,24 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model GraphModel
+@{
+    ViewData["Title"] = "Weerbericht grafiek";
 }
-
+<head>
+    <link href="~/css/custom.css" rel="stylesheet" />
+</head>
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <div>
+        <p>Type: @Html.RadioButtonFor(model => model.graphType, 0, new { @checked = "checked" }) Station status | @Html.RadioButtonFor(model => model.graphType, 1) Meerdaags weerbericht</p>
+        <!-- alleen als graphType 0 -->
+        <p>Weerstation: </p>
+        <p>Datumrange: @Html.EditorFor(model => model.startPeriod) tot @Html.EditorFor(model => model.endPeriod)</p>
+        <p>Filters:</p>
+
+        <p></p>
+
+        <!-- alleen als graphType 1 -->
+        <p></p>
+    </div>
 </div>
+<script>
+    // date picker
+</script>

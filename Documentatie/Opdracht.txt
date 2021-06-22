@@ -36,12 +36,6 @@ Data ophalen uit de feed met drie (twee) parameters.
 	- Startdatum van meetbaar periode?
 	- Einddatum van meetbaar periode? (optioneel, default van startdatum+7)
 Data opslaan in lokale MySQL database.
-
-Console app:
-	Haal data Buienradar op
-	Plaats data in lijst
-	Stuur lijst door naar API
-	API verwerkt data (POST/UPDATE)
 	
 Database (MySql/SQL?)
 	Database script voor wat filler informatie voor website (placeholder)
@@ -52,9 +46,6 @@ Site:
 	haal oudste en nieuwste op voor max en min tijdsperiode
 
 [Wat heb ik gedaan?]
-Nadat het project is aangemaakt, wordt automatisch een Swagger.io API opgezet.
-https://swagger.io is een gemakkelijkere manier om API's op te bouwen. Het maakt gebruik van de OpenAPI Specification (OAS).
-
 Vanuit meerdere bronnen heb ik gelezen dat je beter niet Tasks periodiek kan uitvoeren, aangezien IIS kan besluiten om dan net iets op te ruimen
 of iets anders te doen, waardoor de Task niet wordt uitgevoerd. Het is dus erg onbetrouwbaar.
 Daarom kies ik ervoor om via Windows Scheduler een klein console applicatie (EducomOpdrachtScheduledTask) periodiek uit te voeren, die een
@@ -69,6 +60,13 @@ Add-Migration Initial -Context WeerstationContext
 Update-Database -Context WeerberichtContext
 Update-Database -Context WeerstationContext
 
+[Waar heb ik over nagedacht?]
+Q: Waarom haalt de console applicatie de data op en niet de API zelf?
+A: In eerste instantie dacht ik dat de console applicatie de data kon ophalen en doorsturen naar de API, die meer fungeert als een database voor de site.
+   Later dacht ik ook aan de optie om een simpele call door te geven vanuit de console applicatie richting de API, zodat de API alles ophaalt op zichzelf.
+   Ik zat te twijfelen aan mijn eerdere keuze, maar heb het uiteindelijk gewoon zo gelaten omdat het niet heel veel leek uit te maken.
+   Dit is dan weer iets om later op te lossen, indien nodig.
+
 [NuGet]
 Microsoft.EntityFrameworkCore - Apache-2.0 licentie
 	Microsoft.EntityFrameworkCore.InMemory - lokale opslag
@@ -78,6 +76,7 @@ Microsoft.EntityFrameworkCore - Apache-2.0 licentie
 	Microsoft.EntityFrameworkCore.Relational - dependancy
 MySql.Data - GPLv2 licentie
 MySql.Data.EntityFramework - GPLv2 licentie
+jQuery.UI.Combined - MIT licentie
 
 [Documentatie]
 --Installatie--
@@ -92,8 +91,7 @@ SQL Express 2019 Database
 Zet SQL op
 	Windows + R, voer 'Ssms' uit.
 	Connect met: [Computer naam]\SQLEXPRESS via Windows Authentication, deze staat waarschijnlijk al standaard ingevuld.
-	Creëer een database met de naam EducomOpdrachtAPI.
-	
+	Creëer een database met de naam EducomOpdrachtAPI. Open het bijgeleverde 'SQL Script.sql' bestand en voer deze uit.
 	
 Installeer IIS
 	Windows + R, voer 'optionalfeatures' uit.
@@ -127,6 +125,16 @@ Exporteer projecten
 Opzetten Console applicatie
 	Build de console applicatie als een Release build.
 	Ga naar de opslag folder voor de console applicatie en plaats dit op een veilige, permanente plek.
+	Windows + R, voer 'taskschd.msc' uit.
+	Open de folder links en klik met de rechtermuisknop op de bibliotheek -> Nieuwe Map. Noem de map naar wat je wil.
+	Klik nu met de rechtermuisknop op de zojuist aangemaakte folder en klik op Taak maken.
+	Voer een naam en beschrijving in. Klik op de Triggers tab en klik op Nieuw.
+		Start deze taak: Gepland
+		Dagelijks, zet Start op een rond uur zoals 14:00:00
+		Taak herhalen elke: 1 uur - gedurende: oneindig
+		Klik op OK.
+	Klik op de Acties tab en klik op Nieuw. Klik op Bladeren en navigeer naar de .exe van de console applicatie die je eerder gebouwd hebt. Klik op OK.
+	
 	
 --Uitvoering--
 Configuratie
