@@ -7,22 +7,35 @@ namespace EducomOpdrachtTaskScheduler.Models
         /// <summary>
         /// Weerstation vanuit https://data.buienradar.nl/1.1/feed/json opgehaald. Actuele data per weerstation.
         /// </summary>
+        // Generieke data
         public int Id { get; set; }
         public long StationId { get; set; }
         public DateTime Date { get; set; }
         public string Region { get; set; }
         public string Name { get; set; }
-        public int Temperature { get; set; }
-        public int Humidity { get; set; }
-        public int AirPressure { get; set; }
+        // Temperatuur
+        public double TemperatureGc { get; set; }   // temperatuur in graden Celsius
+        public double TemperatureCm { get; set; }   // temperatuur in graden Celsius op 10 cm hoogte
+        // Windsnelheid
+        public double WindspeedMs { get; set; }     // windsnelheid in meter per seconde
+        public int WindspeedBf { get; set; }        // windsnelheid volgens de schaal van Beaufort: https://www.knmi.nl/kennis-en-datacentrum/uitleg/windschaal-van-beaufort
+        // Overig
+        public int Humidity { get; set; }           // relatieve luchtvochtigheid in %
+        public double AirPressure { get; set; }     // luchtdruk in hectopascal (hPa), ook wel millibar
 
-        public Weerstation(long stationId, DateTime date, string region, string name, int temperature, int humidity, int airPressure)
+        public Weerstation(long stationId, DateTime date, string region, string name, double temperatureGc, double temperatureCm, double windspeedMs, int windspeedBf, int humidity, double airPressure)
         {
             this.StationId = stationId;
             this.Date = date;
             this.Region = region;
             this.Name = name;
-            this.Temperature = temperature;
+
+            this.TemperatureGc = temperatureGc;
+            this.TemperatureCm = temperatureCm;
+
+            this.WindspeedMs = windspeedMs;
+            this.WindspeedBf = windspeedBf;
+
             this.Humidity = humidity;
             this.AirPressure = airPressure;
         }

@@ -41,6 +41,9 @@ namespace EducomOpdrachtAPI.Migrations
                     b.Property<int>("SunChance")
                         .HasColumnType("int");
 
+                    b.Property<int>("Windspeed")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.ToTable("Weerberichten");

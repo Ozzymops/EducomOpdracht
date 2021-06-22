@@ -7,10 +7,10 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace EducomOpdrachtAPI.Migrations
+namespace EducomOpdrachtAPI.Migrations.Weerstation
 {
-    [DbContext(typeof(WeerberichtContext))]
-    [Migration("20210619143740_Initial")]
+    [DbContext(typeof(WeerstationContext))]
+    [Migration("20210622132637_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -21,31 +21,46 @@ namespace EducomOpdrachtAPI.Migrations
                 .HasAnnotation("ProductVersion", "5.0.7")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("EducomOpdrachtAPI.Models.Weerbericht", b =>
+            modelBuilder.Entity("EducomOpdrachtAPI.Models.Weerstation", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<double>("AirPressure")
+                        .HasColumnType("float");
+
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("MaxTemperature")
+                    b.Property<int>("Humidity")
                         .HasColumnType("int");
 
-                    b.Property<int>("MinTemperature")
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Region")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("StationId")
+                        .HasColumnType("bigint");
+
+                    b.Property<double>("TemperatureCm")
+                        .HasColumnType("float");
+
+                    b.Property<double>("TemperatureGc")
+                        .HasColumnType("float");
+
+                    b.Property<int>("WindspeedBf")
                         .HasColumnType("int");
 
-                    b.Property<int>("RainChance")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SunChance")
-                        .HasColumnType("int");
+                    b.Property<double>("WindspeedMs")
+                        .HasColumnType("float");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Weerberichten");
+                    b.ToTable("Weerstations");
                 });
 #pragma warning restore 612, 618
         }

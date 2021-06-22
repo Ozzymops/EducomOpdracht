@@ -51,42 +51,74 @@ namespace EducomOpdrachtTaskScheduler
             Console.WriteLine(DateTime.Now.ToString() + " | Processing " + weerstationCount.ToString() + " weather stations...");
 
             // Loop dat alle data verwerkt en in lijsten stopt
-            #region Weerstation weerberichten actueel
+            #region Weerstation actueel
             for (int count = 0; count < weerstationCount; count++)
             {
                 // Weerstation
                 string weerstationChain = "buienradarnl.weergegevens.actueel_weer.weerstations.weerstation[" + count.ToString() + "]";
 
-                int tempTemperature;
-                int tempHumidity;
-                int tempAirPressure;
+                double temperatureGc;
+                double temperatureCm;
+                double windspeedMs;
+                int windspeedBf;
+                int humidity;
+                double airPressure;
 
-                #region Try/catch voor temperatuur, luchtvochtigheid en luchtdruk
+                #region Try/catch voor temperatuur, windsnelheid, luchtvochtigheid en luchtdruk
+                // Niet alle waarden bestaan bij alle weerstations, dus moeten try/catch statements gebruikt worden om niet-bestaande waarden te vervangen met een soort van placeholder: -999
+                // -999 wordt later verwerkt als 'niet-bestaand' op de site, en wordt dus niet getoond.
                 try
                 {
-                    tempTemperature = (int)Math.Ceiling(parsedJson.SelectToken(weerstationChain + ".temperatuurGC").Value<double>());                                       
+                    temperatureGc = parsedJson.SelectToken(weerstationChain + ".temperatuurGC").Value<double>();                                  
                 }
                 catch
                 {
-                    tempTemperature = -999;                                     
-                }
-
-                try
-                {
-                    tempHumidity = parsedJson.SelectToken(weerstationChain + ".luchtvochtigheid").Value<int>();
-                }
-                catch
-                {
-                    tempHumidity = -999;
+                    temperatureGc = -999;                                     
                 }
 
                 try
                 {
-                    tempAirPressure = (int)Math.Ceiling(parsedJson.SelectToken(weerstationChain + "luchtdruk").Value<double>());
+                    temperatureCm = parsedJson.SelectToken(weerstationChain + ".temperatuur10cm").Value<double>();
                 }
                 catch
                 {
-                    tempAirPressure = -999;
+                    temperatureCm = -999;
+                }
+
+                try
+                {
+                    windspeedMs = parsedJson.SelectToken(weerstationChain + ".windsnelheidMS").Value<double>();
+                }
+                catch
+                {
+                    windspeedMs = -999;
+                }
+
+                try
+                {
+                    windspeedBf = parsedJson.SelectToken(weerstationChain + ".windsnelheidBF").Value<int>();
+                }
+                catch
+                {
+                    windspeedBf = -999;
+                }
+
+                try
+                {
+                    humidity = parsedJson.SelectToken(weerstationChain + ".luchtvochtigheid").Value<int>();
+                }
+                catch
+                {
+                    humidity = -999;
+                }
+
+                try
+                {
+                    airPressure = parsedJson.SelectToken(weerstationChain + "luchtdruk").Value<double>();
+                }
+                catch
+                {
+                    airPressure = -999;
                 }
                 #endregion
 
@@ -94,9 +126,12 @@ namespace EducomOpdrachtTaskScheduler
                     parsedJson.SelectToken(weerstationChain + ".datum").Value<DateTime>(),
                     parsedJson.SelectToken(weerstationChain + ".stationnaam.@regio").Value<string>(),
                     parsedJson.SelectToken(weerstationChain + ".stationnaam.#text").Value<string>(),
-                    tempTemperature,
-                    tempHumidity,
-                    tempAirPressure);
+                    temperatureGc,
+                    temperatureCm,
+                    windspeedMs,
+                    windspeedBf,
+                    humidity,
+                    airPressure);
 
                 weerstations.Add(weerstation);
             }
@@ -112,6 +147,7 @@ namespace EducomOpdrachtTaskScheduler
                 Weerbericht weerbericht = new Weerbericht(DateTime.Parse(parsedJson.SelectToken(weerberichtChain + ".datum").Value<string>(), new System.Globalization.CultureInfo("nl-NL")),
                     parsedJson.SelectToken(weerberichtChain + ".maxtemp").Value<int>(),
                     parsedJson.SelectToken(weerberichtChain + ".mintemp").Value<int>(),
+                    parsedJson.SelectToken(weerberichtChain + ".windkracht").Value<int>(),
                     parsedJson.SelectToken(weerberichtChain + ".kansregen").Value<int>(),
                     parsedJson.SelectToken(weerberichtChain + ".kanszon").Value<int>());
 

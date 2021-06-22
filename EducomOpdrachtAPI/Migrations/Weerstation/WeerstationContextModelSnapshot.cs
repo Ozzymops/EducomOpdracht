@@ -26,8 +26,8 @@ namespace EducomOpdrachtAPI.Migrations.Weerstation
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("AirPressure")
-                        .HasColumnType("int");
+                    b.Property<double>("AirPressure")
+                        .HasColumnType("float");
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
@@ -44,8 +44,17 @@ namespace EducomOpdrachtAPI.Migrations.Weerstation
                     b.Property<long>("StationId")
                         .HasColumnType("bigint");
 
-                    b.Property<int>("Temperature")
+                    b.Property<double>("TemperatureCm")
+                        .HasColumnType("float");
+
+                    b.Property<double>("TemperatureGc")
+                        .HasColumnType("float");
+
+                    b.Property<int>("WindspeedBf")
                         .HasColumnType("int");
+
+                    b.Property<double>("WindspeedMs")
+                        .HasColumnType("float");
 
                     b.HasKey("Id");
 

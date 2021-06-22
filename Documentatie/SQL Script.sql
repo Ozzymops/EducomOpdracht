@@ -128,13 +128,16 @@ CREATE TABLE [dbo].[Weerstations](
 	[Date] [datetime2](7) NOT NULL,
 	[Region] [nvarchar](max) NULL,
 	[Name] [nvarchar](max) NULL,
-	[Temperature] [int] NOT NULL,
+	[TemperatureGc] [float] NOT NULL,
+	[TemperatureCm] [float] NOT NULL,
+	[WindspeedMs] [float] NOT NULL,
+	[WindspeedBf] [int] NOT NULL,
 	[Humidity] [int] NOT NULL,
-	[AirPressure] [int] NOT NULL,
+	[AirPressure] [float] NOT NULL,
  CONSTRAINT [PK_Weerstations] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
 
@@ -143,12 +146,13 @@ CREATE TABLE [dbo].[Weerberichten](
 	[Date] [datetime2](7) NOT NULL,
 	[MaxTemperature] [int] NOT NULL,
 	[MinTemperature] [int] NOT NULL,
+	[Windspeed] [int] NOT NULL,
 	[RainChance] [int] NOT NULL,
 	[SunChance] [int] NOT NULL,
  CONSTRAINT [PK_Weerberichten] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
 
