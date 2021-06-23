@@ -95,6 +95,7 @@ namespace EducomOpdracht.Controllers
             }
 
             gm.weerstationList = visualWeerstations.Select(x => new SelectListItem() { Text = x.Name.ToString(), Value = x.StationId.ToString() });
+            gm.chartData = CreateChart(gm);
 
             return View(gm);
         }
@@ -104,29 +105,31 @@ namespace EducomOpdracht.Controllers
             return View();
         }
 
-        [HttpPost]
         public JsonResult CreateChart(GraphModel model)
         {
             List<Object> data = new List<object>();
 
             DataTable dt = new DataTable();
-            dt.Columns.Add("Employee", System.Type.GetType("System.String"));
-            dt.Columns.Add("Credit", System.Type.GetType("System.Int32"));
+            dt.Columns.Add("Dag", System.Type.GetType("System.DateTime"));
+            dt.Columns.Add("Temperatuur", System.Type.GetType("System.Double"));
+            dt.Columns.Add("Temperatuur 10cm", System.Type.GetType("System.Double"));
+            dt.Columns.Add("Windsnelheid m/s", System.Type.GetType("System.Double"));
+            dt.Columns.Add("Windsnelheid Bf", System.Type.GetType("System.Int32"));
+            dt.Columns.Add("Luchtvochtigheid %", System.Type.GetType("System.Int32"));
+            dt.Columns.Add("Luchtdruk hPa", System.Type.GetType("System.Double"));
 
-            DataRow dr = dt.NewRow();
-            dr["Employee"] = "Sam";
-            dr["Credit"] = 123;
-            dt.Rows.Add(dr);
-
-            dr = dt.NewRow();
-            dr["Employee"] = "Alex";
-            dr["Credit"] = 456;
-            dt.Rows.Add(dr);
-
-            dr = dt.NewRow();
-            dr["Employee"] = "Michael";
-            dr["Credit"] = 789;
-            dt.Rows.Add(dr);
+            foreach(Weerstation weerstation in model.selectedWeerstations)
+            {
+                DataRow dr = dt.NewRow();
+                dr["Dag"] = weerstation.Date;
+                dr["Temperatuur"] = weerstation.TemperatureGc;
+                dr["Temperatuur 10cm"] = weerstation.TemperatureCm;
+                dr["Windsnelheid m/s"] = weerstation.WindspeedMs;
+                dr["Windsnelheid Bf"] = weerstation.WindspeedBf;
+                dr["Luchtvochtigheid %"] = weerstation.Humidity;
+                dr["Luchtdruk hPa"] = weerstation.AirPressure;
+                dt.Rows.Add(dr);
+            }
 
             foreach(DataColumn dc in dt.Columns)
             {

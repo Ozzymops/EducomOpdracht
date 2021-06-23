@@ -37,42 +37,82 @@
 </div>
 @if (Model.selectedWeerstations.Count > 0)
 {
-    <script>
-    $.ajax({
-        type: "POST",
-        url: "/Home/CreateChart",
-        contentType: "application/json; charset=utf-8",
-        dataType: "json",
-        success: function (chData) {
-            var aData = chData;
-            var aLabels = aData[0];
-            var aDatasets1 = aData[1];
-            var dataT = {
-                labels: aLabels,
-                datasets: [{
-                    label: "Test Data",
-                    data: aDatasets1,
-                    fill: false,
-                    backgroundColor: ["rgba(54, 162, 235, 0.2)", "rgba(255, 99, 132, 0.2)", "rgba(255, 159, 64, 0.2)", "rgba(255, 205, 86, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(153, 102, 255, 0.2)", "rgba(201, 203, 207, 0.2)"],
-                    borderColor: ["rgb(54, 162, 235)", "rgb(255, 99, 132)", "rgb(255, 159, 64)", "rgb(255, 205, 86)", "rgb(75, 192, 192)", "rgb(153, 102, 255)", "rgb(201, 203, 207)"],
-                    borderWidth: 1
-                }]
-            };
-            var ctx = $("#chart").get(0).getContext("2d");
-            var myNewChart = new Chart(ctx, {
-                type: 'bar',
-                data: dataT,
-                options: {
-                    responsive: true,
-                    title: { display: true, text: '@Model.selectedWeerstations[0].Name grafiek' },
-                    legend: { position: 'bottom' },
-                    scales: {
-                        xAxes: [{ gridLines: { display: false }, display: true, scaleLabel: { display: false, labelString: '' } }],
-                        yAxes: [{ gridLines: { display: false }, display: true, scaleLabel: { display: false, labelString: '' }, ticks: { stepSize: 50, beginAtZero: true } }]
-                    },
+<script>
+	var chartData = @Html.Raw(Json.Serialize(Model.chartData));
+
+	function buildChart () {
+        var dataDates = chartData.value[0];
+		var dataTemperatureGc = chartData.value[1];
+        var dataTemperatureCm = chartData.value[2];
+        var dataWindspeedMs = chartData.value[3];
+
+        var dataT = {
+            labels: dataDates,
+            datasets: [
+                @if(Model.weerstationTemperatuurEenheid)
+                {
+                    @:{
+                    @:label: "Temperatuur in graden Fahrenheit",
+                    @:data: dataTemperatureGc,
+				    @:fill: false,
+				    @:backgroundColor:["rgba(54, 162, 235, 0.2)", "rgba(255, 99, 132, 0.2)", "rgba(255, 159, 64, 0.2)", "rgba(255, 205, 86, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(153, 102, 255, 0.2)", "rgba(201, 203, 207, 0.2)"],
+				    @:borderColor:["rgb(54, 162, 235)", "rgb(255, 99, 132)", "rgb(255, 159, 64)", "rgb(255, 205, 86)", "rgb(75, 192, 192)", "rgb(153, 102, 255)", "rgb(201, 203, 207)"],
+				    @:borderWidth: 2
+                    @:},
+			        @:{
+                    @:label: "Temperatuur op 10cm hoogte in graden Fahrenheit",
+                    @:data: dataTemperatureCm,
+                    @:fill: false,
+                    @:backgroundColor:["rgba(200, 100, 235, 0.2)", "rgba(255, 99, 132, 0.2)", "rgba(255, 159, 64, 0.2)", "rgba(255, 205, 86, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(153, 102, 255, 0.2)", "rgba(201, 203, 207, 0.2)"],
+                    @:borderColor:["rgb(200, 100, 235)", "rgb(255, 99, 132)", "rgb(255, 159, 64)", "rgb(255, 205, 86)", "rgb(75, 192, 192)", "rgb(153, 102, 255)", "rgb(201, 203, 207)"],
+                    @:borderWidth: 2
+                    @:},
                 }
-            });
-        }
-    });
-    </script>
+                else
+                {
+                    @:{
+                    @:label: "Temperatuur in graden Celsius",
+                    @:data: dataTemperatureGc,
+				    @:fill: false,
+				    @:backgroundColor:["rgba(54, 162, 235, 0.2)", "rgba(255, 99, 132, 0.2)", "rgba(255, 159, 64, 0.2)", "rgba(255, 205, 86, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(153, 102, 255, 0.2)", "rgba(201, 203, 207, 0.2)"],
+				    @:borderColor:["rgb(54, 162, 235)", "rgb(255, 99, 132)", "rgb(255, 159, 64)", "rgb(255, 205, 86)", "rgb(75, 192, 192)", "rgb(153, 102, 255)", "rgb(201, 203, 207)"],
+				    @:borderWidth: 2
+                    @:},
+			        @:{
+                    @:label: "Temperatuur op 10cm hoogte in graden Celsius",
+                    @:data: dataTemperatureCm,
+                    @:fill: false,
+                    @:backgroundColor:["rgba(200, 100, 235, 0.2)", "rgba(255, 99, 132, 0.2)", "rgba(255, 159, 64, 0.2)", "rgba(255, 205, 86, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(153, 102, 255, 0.2)", "rgba(201, 203, 207, 0.2)"],
+                    @:borderColor:["rgb(200, 100, 235)", "rgb(255, 99, 132)", "rgb(255, 159, 64)", "rgb(255, 205, 86)", "rgb(75, 192, 192)", "rgb(153, 102, 255)", "rgb(201, 203, 207)"],
+                    @:borderWidth: 2
+                    @:},
+                }
+                {
+                    label: "Windsnelheid in meter/seconde",
+                    data: dataWindspeedMs,
+                    fill: false,
+                    backgroundColor: ["rgba(200, 100, 235, 0.2)", "rgba(255, 99, 132, 0.2)", "rgba(255, 159, 64, 0.2)", "rgba(255, 205, 86, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(153, 102, 255, 0.2)", "rgba(201, 203, 207, 0.2)"],
+                    borderColor: ["rgb(200, 100, 235)", "rgb(255, 99, 132)", "rgb(255, 159, 64)", "rgb(255, 205, 86)", "rgb(75, 192, 192)", "rgb(153, 102, 255)", "rgb(201, 203, 207)"],
+                    borderWidth: 2
+                }
+            ]
+		};
+		var ctx = $("#chart").get(0).getContext("2d");
+		var myNewChart = new Chart(ctx, {
+			type: 'line',
+			data: dataT,
+			options: {
+				responsive: true,
+				title: { display: true, text: '@Model.selectedWeerstations[0].Name grafiek' },
+				legend: { position: 'bottom' },
+				scales: {
+					xAxes: [{ gridLines: { display: false }, display: true, scaleLabel: { display: true, labelString: 'Datum' } }],
+					yAxes: [{ gridLines: { display: false }, display: true, scaleLabel: { display: true, labelString: 'Temperatuur' }, ticks: { stepSize: 50, beginAtZero: false } }]
+				},
+			}
+		});
+	};
+
+	buildChart();
+</script>
 }

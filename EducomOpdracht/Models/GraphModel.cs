@@ -30,6 +30,7 @@ namespace EducomOpdracht.Models
         public List<Weerbericht> weerberichten { get; set; }
 
         // Chart
+        public JsonResult chartData { get; set; }
         public bool weerstationWindEenheid { get; set; }
         public bool weerstationTemperatuurEenheid { get; set; }
     }
