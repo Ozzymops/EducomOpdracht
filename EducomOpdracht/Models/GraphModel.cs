@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Chart.Mvc.ComplexChart;
 
 namespace EducomOpdracht.Models
 {
@@ -28,14 +29,8 @@ namespace EducomOpdracht.Models
         // Weerberichten
         public List<Weerbericht> weerberichten { get; set; }
 
-        // Filters
-        public bool weerstationTemperature { get; set; }
-        public bool weerstationHumidity { get; set; }
-        public bool weerstationAirPressure { get; set; }
-        public bool weerberichtMaxTemperature { get; set; }
-        public bool weerberichtMinTemperature { get; set; }
-        public bool weerberichtRainChance { get; set; }
-        public bool weerberichtSunChance { get; set; }
-
+        // Chart
+        public bool weerstationWindEenheid { get; set; }
+        public bool weerstationTemperatuurEenheid { get; set; }
     }
 }

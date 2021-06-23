@@ -1,9 +1,12 @@
 ﻿@model GraphModel
 @{
-    ViewData["Title"] = "Weerbericht grafiek";
+    ViewData["Title"] = "Weerstation grafiek";
 }
 <head>
     <link href="~/css/custom.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.min.js" type="text/javascript"></script>
+    <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
 </head>
 <div class="text-center">
     <div>
@@ -15,6 +18,8 @@
                 <p>Weerstation: @Html.DropDownListFor(model => model.selectedListValue, Model.weerstationList, "--Kies een weerstation--", new { @class = "form-control" })</p>
                 <p>Datumrange: @Html.EditorFor(model => model.startPeriod) tot @Html.EditorFor(model => model.endPeriod)</p>
                 <p>Filters:</p>
+                <p>Temperatuur @Html.RadioButtonFor(model => model.weerstationTemperatuurEenheid, false, new { @checked = "checked" }) Celsius @Html.RadioButtonFor(model => model.weerstationTemperatuurEenheid, true) Fahrenheit</p>
+                <p>Windschaal @Html.RadioButtonFor(model => model.weerstationWindEenheid, false, new { @checked = "checked" }) meter per seconde @Html.RadioButtonFor(model => model.weerstationWindEenheid, true) Beaufort</p>
             }
             else
             {
@@ -27,16 +32,47 @@
     </div>
     <div>
         <!-- grafiek -->
-        @if (Model.selectedWeerstations.Count > 0)
-            {
-                <p>Geselecteerd weerstation is @Model.selectedWeerstations[0].Name met id @Model.selectedWeerstations[0].StationId met @Model.selectedWeerstations.Count entries.</p>
-                @foreach(Weerstation weerstation in Model.selectedWeerstations)
-                {
-                    <p>@weerstation.Date.ToString("MMMM dd, yyyy - HH:mm"): @weerstation.TemperatureGc graden celsius, @weerstation.TemperatureCm graden celsius op 10cm hoogte.</p>
-                }
-            } 
+        <canvas id="chart"></canvas>
     </div>
 </div>
-<script>
-    // date picker
-</script>
+@if (Model.selectedWeerstations.Count > 0)
+{
+    <script>
+    $.ajax({
+        type: "POST",
+        url: "/Home/CreateChart",
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function (chData) {
+            var aData = chData;
+            var aLabels = aData[0];
+            var aDatasets1 = aData[1];
+            var dataT = {
+                labels: aLabels,
+                datasets: [{
+                    label: "Test Data",
+                    data: aDatasets1,
+                    fill: false,
+                    backgroundColor: ["rgba(54, 162, 235, 0.2)", "rgba(255, 99, 132, 0.2)", "rgba(255, 159, 64, 0.2)", "rgba(255, 205, 86, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(153, 102, 255, 0.2)", "rgba(201, 203, 207, 0.2)"],
+                    borderColor: ["rgb(54, 162, 235)", "rgb(255, 99, 132)", "rgb(255, 159, 64)", "rgb(255, 205, 86)", "rgb(75, 192, 192)", "rgb(153, 102, 255)", "rgb(201, 203, 207)"],
+                    borderWidth: 1
+                }]
+            };
+            var ctx = $("#chart").get(0).getContext("2d");
+            var myNewChart = new Chart(ctx, {
+                type: 'bar',
+                data: dataT,
+                options: {
+                    responsive: true,
+                    title: { display: true, text: '@Model.selectedWeerstations[0].Name grafiek' },
+                    legend: { position: 'bottom' },
+                    scales: {
+                        xAxes: [{ gridLines: { display: false }, display: true, scaleLabel: { display: false, labelString: '' } }],
+                        yAxes: [{ gridLines: { display: false }, display: true, scaleLabel: { display: false, labelString: '' }, ticks: { stepSize: 50, beginAtZero: true } }]
+                    },
+                }
+            });
+        }
+    });
+    </script>
+}

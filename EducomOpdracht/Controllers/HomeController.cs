@@ -8,6 +8,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Chart.Mvc.ComplexChart;
+using Chart.Mvc.Extensions;
+using System.Data;
 
 namespace EducomOpdracht.Controllers
 {
@@ -53,14 +56,14 @@ namespace EducomOpdracht.Controllers
         {
             var errors = ModelState.Values.SelectMany(v => v.Errors);
 
-            if (ModelState.IsValid)
+            // Valideren
+            if (!ModelState.IsValid)
             {
-
+                return View(gm);
             }
 
-            API api = new API();
-
             // Update data
+            API api = new API();
             gm.weerstations = api.GetAllWeerstations();
 
             List<Weerstation> visualWeerstations = new List<Weerstation>();
@@ -82,11 +85,57 @@ namespace EducomOpdracht.Controllers
                 {
                     gm.selectedWeerstations.Add(weerstation);
                 }
+
+                // - Converteer naar Fahrenheit als actief staat
+                if (gm.weerstationTemperatuurEenheid)
+                {
+                    weerstation.TemperatureGc = (weerstation.TemperatureGc * 9) / 5 + 32;
+                    weerstation.TemperatureCm = (weerstation.TemperatureCm * 9) / 5 + 32;
+                }
             }
 
             gm.weerstationList = visualWeerstations.Select(x => new SelectListItem() { Text = x.Name.ToString(), Value = x.StationId.ToString() });
 
             return View(gm);
+        }
+
+        public IActionResult Weerbericht()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public JsonResult CreateChart(GraphModel model)
+        {
+            List<Object> data = new List<object>();
+
+            DataTable dt = new DataTable();
+            dt.Columns.Add("Employee", System.Type.GetType("System.String"));
+            dt.Columns.Add("Credit", System.Type.GetType("System.Int32"));
+
+            DataRow dr = dt.NewRow();
+            dr["Employee"] = "Sam";
+            dr["Credit"] = 123;
+            dt.Rows.Add(dr);
+
+            dr = dt.NewRow();
+            dr["Employee"] = "Alex";
+            dr["Credit"] = 456;
+            dt.Rows.Add(dr);
+
+            dr = dt.NewRow();
+            dr["Employee"] = "Michael";
+            dr["Credit"] = 789;
+            dt.Rows.Add(dr);
+
+            foreach(DataColumn dc in dt.Columns)
+            {
+                List<object> x = new List<object>();
+                x = (from DataRow drr in dt.Rows select drr[dc.ColumnName]).ToList();
+                data.Add(x);
+            }
+
+            return Json(data);
         }
 
         public IActionResult Privacy()

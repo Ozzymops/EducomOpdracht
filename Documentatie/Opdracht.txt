@@ -67,6 +67,9 @@ A: In eerste instantie dacht ik dat de console applicatie de data kon ophalen en
    Ik zat te twijfelen aan mijn eerdere keuze, maar heb het uiteindelijk gewoon zo gelaten omdat het niet heel veel leek uit te maken.
    Dit is dan weer iets om later op te lossen, indien nodig.
 
+Q: Waarom niet de bijgevoegde MVC charts gebruikt?
+A: Deze crashten steeds en ik kon na urenlang zoeken geen oplossing vinden, dus heb ik maar een NuGet package gedownload die hetzelfde levert.
+
 [NuGet]
 Microsoft.EntityFrameworkCore - Apache-2.0 licentie
 	Microsoft.EntityFrameworkCore.InMemory - lokale opslag
@@ -74,9 +77,7 @@ Microsoft.EntityFrameworkCore - Apache-2.0 licentie
 	Microsoft.EntityFrameworkCore.Abstractions - dependancy 
 	Microsoft.EntityFrameworkCore.Analyzers - dependancy 
 	Microsoft.EntityFrameworkCore.Relational - dependancy
-MySql.Data - GPLv2 licentie
-MySql.Data.EntityFramework - GPLv2 licentie
-jQuery.UI.Combined - MIT licentie
+System-Web-Helpers.dll
 
 [Documentatie]
 --Installatie--
