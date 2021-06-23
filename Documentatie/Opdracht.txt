@@ -77,7 +77,8 @@ Microsoft.EntityFrameworkCore - Apache-2.0 licentie
 	Microsoft.EntityFrameworkCore.Abstractions - dependancy 
 	Microsoft.EntityFrameworkCore.Analyzers - dependancy 
 	Microsoft.EntityFrameworkCore.Relational - dependancy
-System-Web-Helpers.dll
+
+Chart.Js
 
 [Documentatie]
 --Installatie--

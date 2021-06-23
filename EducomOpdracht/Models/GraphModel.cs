@@ -12,8 +12,10 @@ namespace EducomOpdracht.Models
     {
         // Sent
         public long stationId { get; set; }
-        public DateTime startPeriod { get; set; }
-        public DateTime endPeriod { get; set; }
+        public string startPeriod { get; set; }
+        public string endPeriod { get; set; }
+        public DateTime startPeriodDate { get; set; }
+        public DateTime endPeriodDate { get; set; }
 
         // General
         public int graphType = 0;
@@ -28,10 +30,13 @@ namespace EducomOpdracht.Models
 
         // Weerberichten
         public List<Weerbericht> weerberichten { get; set; }
+        public List<Weerbericht> selectedWeerberichten { get; set; }
+        public IEnumerable<SelectListItem> weerberichtList { get; set; }
 
         // Chart
         public JsonResult chartData { get; set; }
         public bool weerstationWindEenheid { get; set; }
         public bool weerstationTemperatuurEenheid { get; set; }
+        public bool weerberichtTemperatuurEenheid { get; set; }
     }
 }

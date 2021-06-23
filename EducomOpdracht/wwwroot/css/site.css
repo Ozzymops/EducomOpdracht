@@ -69,3 +69,68 @@ body {
   white-space: nowrap;
   line-height: 60px; /* Vertically center the text there */
 }
+
+/* Custom classes
+-------------------------------------------------- */
+body.gradient {
+    background: #FFFFFF;
+    background: -moz-radial-gradient(center, #FFFFFF 0%, #5C5C5C 100%);
+    background: -webkit-radial-gradient(center, #FFFFFF 0%, #5C5C5C 100%);
+    background: radial-gradient(ellipse at center, #FFFFFF 0%, #5C5C5C 100%);
+}
+
+p.label {
+    display: flex;
+    font-size: 16px;
+    color: white;
+    margin: auto;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.datepicker {
+    display: flex;
+    width: 95%;
+    margin: 0 auto;
+}
+
+.radiobutton {
+    display: inline;
+}
+
+.dropdownlist {
+    display: flex;
+    width: 95%;
+    margin: 0 auto;
+    background-color: dimgray;
+    color: white;
+}
+
+input[type=submit].submitter {
+    display: flex;
+    width: 50%;
+    margin: 0 auto;
+    background-color: dimgray;
+    color: white;
+}
+
+div.graph_container {
+    width: 90%;
+    height: 100%;
+    margin: auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+div.graph_left {
+    background-color: dimgray;
+    color: white;
+    width: 30%;
+    border-right: solid 2px black;
+    padding: 2px;
+}
+
+div.graph_right {
+    width: 70%;
+}

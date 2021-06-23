@@ -1,1 +1,126 @@
-﻿
+﻿@model GraphModel
+@{
+    ViewData["Title"] = "Weerbericht grafiek";
+}
+<div class="graph_container">
+    <div class="graph_left">
+        @using (Html.BeginForm())
+        {
+            <p class="label">Datumrange:</p>
+            @Html.TextBoxFor(model => model.startPeriod, new { @class = "datepicker", @placeholder = "format: dd-mm-yyyy hh:mm:ss" })
+            <p class="label">tot</p>
+            @Html.TextBoxFor(model => model.endPeriod, new { @class = "datepicker", @placeholder = "format: dd-mm-yyyy hh:mm:ss" })
+
+            <p class="label">Instellingen:</p>
+            <p class="label"> Temperatuur: <p class="radiobutton">@Html.RadioButtonFor(model => model.weerberichtTemperatuurEenheid, false, new { @checked = "checked" }) Celsius</p><p class="radiubutton">@Html.RadioButtonFor(model => model.weerberichtTemperatuurEenheid, true) Fahrenheit</p></p>
+
+            <input type="submit" value="Submit" class="submitter" />
+        }
+    </div>
+    <div class="graph_right">
+        <canvas id="chart"></canvas>
+    </div>
+</div>
+<!-- #region Grafiekcode -->
+@if (Model.selectedWeerberichten.Count > 0)
+{
+<script>
+	var chartData = @Html.Raw(Json.Serialize(Model.chartData));
+
+	function buildChart () {
+        var dataDates = chartData.value[0];
+		var dataMaxTemperature = chartData.value[1];
+        var dataMinTemperature = chartData.value[2];
+        var dataWindspeedBf = chartData.value[3];
+        var dataRainChance = chartData.value[4];
+        var dataSunChance = chartData.value[5];
+
+        var dataT = {
+            labels: dataDates,
+            datasets: [
+                @if(Model.weerberichtTemperatuurEenheid)
+                {
+                    @:{
+                    @:label: "Maximum temperatuur in graden Fahrenheit",
+                    @:data: dataMaxTemperature,
+				    @:fill: false,
+				    @:backgroundColor:["rgba(54, 162, 235, 0.2)", "rgba(255, 99, 132, 0.2)", "rgba(255, 159, 64, 0.2)", "rgba(255, 205, 86, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(153, 102, 255, 0.2)", "rgba(201, 203, 207, 0.2)"],
+				    @:borderColor:["rgb(54, 162, 235)", "rgb(255, 99, 132)", "rgb(255, 159, 64)", "rgb(255, 205, 86)", "rgb(75, 192, 192)", "rgb(153, 102, 255)", "rgb(201, 203, 207)"],
+				    @:borderWidth: 2
+                    @:},
+
+                    @:{
+                    @:label: "Minimum temperatuur in graden Fahrenheit",
+                    @:data: dataMinTemperature,
+                    @:fill: false,
+                    @:backgroundColor:["rgba(200, 100, 235, 0.2)", "rgba(255, 99, 132, 0.2)", "rgba(255, 159, 64, 0.2)", "rgba(255, 205, 86, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(153, 102, 255, 0.2)", "rgba(201, 203, 207, 0.2)"],
+                    @:borderColor:["rgb(200, 100, 235)", "rgb(255, 99, 132)", "rgb(255, 159, 64)", "rgb(255, 205, 86)", "rgb(75, 192, 192)", "rgb(153, 102, 255)", "rgb(201, 203, 207)"],
+                    @:borderWidth: 2
+                    @:},
+                }
+                else
+                {
+                    @:{
+                    @:label: "Maximum temperatuur in graden Celsius",
+                    @:data: dataMaxTemperature,
+				    @:fill: false,
+				    @:backgroundColor:["rgba(54, 162, 235, 0.2)", "rgba(255, 99, 132, 0.2)", "rgba(255, 159, 64, 0.2)", "rgba(255, 205, 86, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(153, 102, 255, 0.2)", "rgba(201, 203, 207, 0.2)"],
+				    @:borderColor:["rgb(54, 162, 235)", "rgb(255, 99, 132)", "rgb(255, 159, 64)", "rgb(255, 205, 86)", "rgb(75, 192, 192)", "rgb(153, 102, 255)", "rgb(201, 203, 207)"],
+				    @:borderWidth: 2
+                    @:},
+
+                    @:{
+                    @:label: "Minimum temperatuur in graden Celsius",
+                    @:data: dataMinTemperature,
+                    @:fill: false,
+                    @:backgroundColor:["rgba(200, 100, 235, 0.2)", "rgba(255, 99, 132, 0.2)", "rgba(255, 159, 64, 0.2)", "rgba(255, 205, 86, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(153, 102, 255, 0.2)", "rgba(201, 203, 207, 0.2)"],
+                    @:borderColor:["rgb(200, 100, 235)", "rgb(255, 99, 132)", "rgb(255, 159, 64)", "rgb(255, 205, 86)", "rgb(75, 192, 192)", "rgb(153, 102, 255)", "rgb(201, 203, 207)"],
+                    @:borderWidth: 2
+                    @:},
+                }
+                {
+                label: "Windsnelheid volgens de schaal van Beaufort",
+                data: dataWindspeedBf,
+				fill: false,
+				backgroundColor:["rgba(54, 162, 235, 0.2)", "rgba(255, 99, 132, 0.2)", "rgba(255, 159, 64, 0.2)", "rgba(255, 205, 86, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(153, 102, 255, 0.2)", "rgba(201, 203, 207, 0.2)"],
+				borderColor:["rgb(54, 162, 235)", "rgb(255, 99, 132)", "rgb(255, 159, 64)", "rgb(255, 205, 86)", "rgb(75, 192, 192)", "rgb(153, 102, 255)", "rgb(201, 203, 207)"],
+				borderWidth: 2
+                },
+                {
+                label: "Kans op regen in %",
+                data: dataRainChance,
+                fill: false,
+                backgroundColor: ["rgba(54, 162, 235, 0.2)", "rgba(255, 99, 132, 0.2)", "rgba(255, 159, 64, 0.2)", "rgba(255, 205, 86, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(153, 102, 255, 0.2)", "rgba(201, 203, 207, 0.2)"],
+                borderColor: ["rgb(54, 162, 235)", "rgb(255, 99, 132)", "rgb(255, 159, 64)", "rgb(255, 205, 86)", "rgb(75, 192, 192)", "rgb(153, 102, 255)", "rgb(201, 203, 207)"],
+                borderWidth: 2
+                },
+                {
+                label: "Kans op zon in %",
+                data: dataSunChance,
+                fill: false,
+                backgroundColor: ["rgba(54, 162, 235, 0.2)", "rgba(255, 99, 132, 0.2)", "rgba(255, 159, 64, 0.2)", "rgba(255, 205, 86, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(153, 102, 255, 0.2)", "rgba(201, 203, 207, 0.2)"],
+                borderColor: ["rgb(54, 162, 235)", "rgb(255, 99, 132)", "rgb(255, 159, 64)", "rgb(255, 205, 86)", "rgb(75, 192, 192)", "rgb(153, 102, 255)", "rgb(201, 203, 207)"],
+                borderWidth: 2
+                }
+            ]
+		};
+		var ctx = $("#chart").get(0).getContext("2d");
+		var myNewChart = new Chart(ctx, {
+			type: 'line',
+			data: dataT,
+			options: {
+				responsive: true,
+				title: { display: true, text: 'Resultaten weerberichten van @Model.startPeriod tot @Model.endPeriod' },
+				legend: { position: 'top' },
+				scales: {
+					xAxes: [{ gridLines: { display: false }, display: true, scaleLabel: { display: true, labelString: 'Moment' } }],
+					yAxes: [{ gridLines: { display: false }, display: true, scaleLabel: { display: true, labelString: 'Waarde' }, ticks: { stepSize: 10, beginAtZero: false } }]
+				},
+			}
+		});
+	};
+
+	buildChart();
+</script>
+}
+<!-- #endregion -->
