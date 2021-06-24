@@ -4,23 +4,38 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Chart.Mvc.ComplexChart;
 
 namespace EducomOpdracht.Models
 {
     public class GraphModel
     {
-        // Sent
+        // Verzonden informatie (View -> Model -> Controller)
+        // --------------------------------------------------
+        // Generiek
         public long stationId { get; set; }
         public string startPeriod { get; set; }
         public string endPeriod { get; set; }
         public DateTime startPeriodDate { get; set; }
         public DateTime endPeriodDate { get; set; }
 
-        // General
-        public int graphType = 0;
+        // Grafiek
+        public bool weerstationWindEenheid { get; set; }
+        public bool weerstationTemperatuurEenheid { get; set; }
+        public bool weerberichtTemperatuurEenheid { get; set; }
+        public bool enableWeerstationTemperatureGc { get; set; }
+        public bool enableWeerstationTemperatureCm { get; set; }
+        public bool enableWeerstationWindspeed { get; set; }
+        public bool enableWeerstationHumidity { get; set; }
+        public bool enableWeerstationAirPressure { get; set; }
+        public bool enableWeerberichtMaxTemp { get; set; }
+        public bool enableWeerberichtMinTemp { get; set; }
+        public bool enableWeerberichtWindspeed { get; set; }
+        public bool enableWeerberichtRainChance { get; set; }
+        public bool enableWeerberichtSunChance { get; set; }
 
-        // Drop down list
+        // Verkregen informatie (Controller -> Model -> View)
+        // --------------------------------------------------
+        // Generiek
         public string selectedListValue { get; set; }
 
         // Weerstations
@@ -33,22 +48,7 @@ namespace EducomOpdracht.Models
         public List<Weerbericht> selectedWeerberichten { get; set; }
         public IEnumerable<SelectListItem> weerberichtList { get; set; }
 
-        // Chart
+        // Grafiek
         public JsonResult chartData { get; set; }
-        public bool weerstationWindEenheid { get; set; }
-        public bool weerstationTemperatuurEenheid { get; set; }
-        public bool weerberichtTemperatuurEenheid { get; set; }
-
-        // Filters
-        public bool enableWeerstationTemperatureGc { get; set; }
-        public bool enableWeerstationTemperatureCm { get; set; }
-        public bool enableWeerstationWindspeed { get; set; }
-        public bool enableWeerstationHumidity { get; set; }
-        public bool enableWeerstationAirPressure { get; set; }
-        public bool enableWeerberichtMaxTemp { get; set; }
-        public bool enableWeerberichtMinTemp { get; set; }
-        public bool enableWeerberichtWindspeed { get; set; }
-        public bool enableWeerberichtRainChance { get; set; }
-        public bool enableWeerberichtSunChance { get; set; }
     }
 }

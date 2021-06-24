@@ -10,26 +10,38 @@ namespace EducomOpdracht.Models
 {
     public class API
     {
+        /// <summary>
+        /// Haalt alle weerstations op uit de database.
+        /// </summary>
+        /// <returns>Een lijst van Weerstations</returns>
         public List<Weerstation> GetAllWeerstations()
         {
             string json = string.Empty;
 
-            // Ophalen data uit API als json
+            // Creëer een web request (GET) richting de API endpoint voor weerstations.
             HttpWebRequest getWebRequest = (HttpWebRequest)WebRequest.Create(System.Configuration.ConfigurationManager.AppSettings["weerstationsUrl"]);
             getWebRequest.Method = "GET";
             getWebRequest.ContentType = "application/x-www-form-urlencoded";
 
+            // SSL certificate error fix, anders werkt het niet op IIS
+            getWebRequest.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
+
+            // Creëer een web response om de request mee uit te voeren en data terug te krijgen om in te lezen.
             HttpWebResponse getWebResponse = (HttpWebResponse)getWebRequest.GetResponse();
             using (StreamReader getStreamReader = new StreamReader(getWebResponse.GetResponseStream()))
             {
                 json = getStreamReader.ReadToEnd();
             }
 
+            // Parse de verkregen data zodat het bruikbaar is.
             JArray parsedJson = JArray.Parse(json);
+
+            // Tel het aantal weerstations voor de for-loop.
             int weerstationCount = parsedJson.Count;
 
             List<Weerstation> weerstations = new List<Weerstation>();
 
+            // Maak een nieuwe Weerstation object per json entry en plaats deze in een lijst.
             for (int i = 0; i < weerstationCount; i++)
             {
                 Weerstation weerstation = new Weerstation(parsedJson.SelectToken("[" + i +"].stationId").Value<long>(),
@@ -46,6 +58,7 @@ namespace EducomOpdracht.Models
                 weerstations.Add(weerstation);
             }
 
+            // Dubbelcheck of er überhaupt resultaten zijn. Zo ja, klaar!
             if (weerstations.Count != 0)
             {
                 return weerstations;
@@ -54,26 +67,38 @@ namespace EducomOpdracht.Models
             return null;
         }
 
+        /// <summary>
+        /// Haalt alle weerberichten op uit de database.
+        /// </summary>
+        /// <returns>Een lijst van Weerberichten</returns>
         public List<Weerbericht> GetAllWeerberichten()
         {
             string json = string.Empty;
 
-            // Ophalen data uit API als json
+            // Creëer een web request (GET) richting de API endpoint voor weerberichten.
             HttpWebRequest getWebRequest = (HttpWebRequest)WebRequest.Create(System.Configuration.ConfigurationManager.AppSettings["weerberichtenUrl"]);
             getWebRequest.Method = "GET";
             getWebRequest.ContentType = "application/x-www-form-urlencoded";
 
+            // SSL certificate error fix, anders werkt het niet op IIS
+            getWebRequest.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
+
+            // Creëer een web response om de request mee uit te voeren en data terug te krijgen om in te lezen.
             HttpWebResponse getWebResponse = (HttpWebResponse)getWebRequest.GetResponse();
             using (StreamReader getStreamReader = new StreamReader(getWebResponse.GetResponseStream()))
             {
                 json = getStreamReader.ReadToEnd();
             }
 
+            // Parse de verkregen data zodat het bruikbaar is.
             JArray parsedJson = JArray.Parse(json);
+
+            // Tel het aantal weerberichten voor de for-loop.
             int weerberichtCount = parsedJson.Count;
 
             List<Weerbericht> weerberichten = new List<Weerbericht>();
 
+            // Maak een nieuwe Weerbericht object per json entry en plaats deze in een lijst.
             for (int i = 0; i < weerberichtCount; i++)
             {
                 Weerbericht weerbericht = new Weerbericht(parsedJson.SelectToken("[" + i + "].date").Value<DateTime>(),
@@ -86,6 +111,7 @@ namespace EducomOpdracht.Models
                 weerberichten.Add(weerbericht);
             }
 
+            // Dubbelcheck of er überhaupt resultaten zijn. Zo ja, klaar!
             if (weerberichten.Count != 0)
             {
                 return weerberichten;

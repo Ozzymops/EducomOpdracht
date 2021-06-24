@@ -3,17 +3,21 @@
     ViewData["Title"] = "Weerstation grafiek";
 }
 <div class="graph_container">
+    <!-- Selectie van weerstation en instellingen voor grafiek -->
     <div class="graph_left">
         @using (Html.BeginForm())
         {
+            <!-- Dropdown-list voor weerstations -->
             <p class="label">Weerstation:</p>
             @Html.DropDownListFor(model => model.selectedListValue, Model.weerstationList, "--Kies een weerstation--", new { @class = "dropdownlist" })
 
+            <!-- Datumselectie -->
             <p class="label">Datumrange:</p>
             @Html.TextBoxFor(model => model.startPeriod, new { @class = "datepicker", @placeholder = "format: dd-mm-yyyy hh:mm:ss" })
             <p class="label" style="display: block">tot</p>
             @Html.TextBoxFor(model => model.endPeriod, new { @class = "datepicker", @placeholder = "format: dd-mm-yyyy hh:mm:ss" })
 
+            <!-- Instellingen voor grafiek -->
             <p class="label">Filters (toegepast op Submit):</p>
             <div class="settingsbox">
                 <div class="inner_settingsbox">
@@ -41,36 +45,43 @@
                 </div>
             </div>
             
+            <!-- Submit knop -->
             <input type="submit" value="Submit" class="submitter" />
-
             <p class="small-label">Opmerking: niet alle weerstations hebben alle sensoren beschikbaar. Sommige weerstations hebben dus geen temperatuur of luchtdruk of windsnelheid opgeslagen.</p>
         }
     </div>
     <div class="graph_right">
+        <!-- Grafieklocatie -->
         <canvas id="chart"></canvas>
     </div>
 </div>
-<!--
-            #region Grafiekcode -->
+<!-- #region Grafiekcode -->
+<!-- Check of er überhaupt weerstations zijn die binnen de selectie vallen -->
 @if (Model.selectedWeerstations.Count > 0)
 {
 <script>
+    // Json data omzetten naar bruikbare data
     var chartData = @Html.Raw(Json.Serialize(Model.chartData));
 
-                function buildChart () {
-                    var dataDates = chartData.value[0];
-                    var dataTemperatureGc = chartData.value[1];
-                    var dataTemperatureCm = chartData.value[2];
-                    var dataWindspeedMs = chartData.value[3];
-                    var dataWindspeedBf = chartData.value[4];
-                    var dataHumidity = chartData.value[5];
-                    var dataAirPressure = chartData.value[6];
+    function buildChart() {
+        // Data opzetten voor gebruik in grafiek
+        var dataDates = chartData.value[0];
+        var dataTemperatureGc = chartData.value[1];
+        var dataTemperatureCm = chartData.value[2];
+        var dataWindspeedMs = chartData.value[3];
+        var dataWindspeedBf = chartData.value[4];
+        var dataHumidity = chartData.value[5];
+        var dataAirPressure = chartData.value[6];
 
-                    var dataT = {
+        // Data verwerken naar grafiek datasets
+        var dataT = {
             labels: dataDates,
             datasets: [
+                // Temperatuur
+                // Check of het in Celsius of Fahrenheit moet zijn
                 @if(Model.weerstationTemperatuurEenheid)
                 {
+                    @:// Check of temperatuur überhaupt beschikbaar is (niet -999 dus)
                     if (Model.selectedWeerstations[0].TemperatureGc != -999)
                     {
                         @:{
@@ -119,6 +130,9 @@
                         @:},
                     }
                 }
+                // Windsnelheid
+                // Check of het in meter per seconde of Beaufort moet zijn
+                // Check ook of windsnelheid überhaupt beschikbaar is (niet -999 dus)
                 @if (!Model.weerstationWindEenheid && Model.selectedWeerstations[0].WindspeedMs != -999)
                 {
                     @:{
@@ -141,6 +155,8 @@
 				    @:borderWidth: 2
                     @:},
                 }
+                // Luchtvochtigheid
+                // Check of luchtvochtigheid überhaupt beschikbaar is (niet -999 dus)
                 @if (Model.selectedWeerstations[0].Humidity != -999)
                 {
                     @:{
@@ -152,6 +168,8 @@
 				    @:borderWidth: 2
                     @:},
                 }
+                // Luchtdruk
+                // Check of luchtdruk überhaupt beschikbaar is (niet -999 dus)
                 @if (Model.selectedWeerstations[0].AirPressure != -999)
                 {
                     @:{
@@ -164,7 +182,8 @@
                     @:}
                 }
             ]
-		};
+        };
+        // Bouw de grafiek op
 		var ctx = $("#chart").get(0).getContext("2d");
 		var myNewChart = new Chart(ctx, {
 			type: 'line',
@@ -181,6 +200,7 @@
 		});
 	};
 
+    // Voer bovenstaande functie uit
 	buildChart();
 </script>
 }
