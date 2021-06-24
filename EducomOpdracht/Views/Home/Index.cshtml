@@ -11,36 +11,62 @@
 
             <p class="label">Datumrange:</p>
             @Html.TextBoxFor(model => model.startPeriod, new { @class = "datepicker", @placeholder = "format: dd-mm-yyyy hh:mm:ss" })
-            <p class="label">tot</p>
+            <p class="label" style="display: block">tot</p>
             @Html.TextBoxFor(model => model.endPeriod, new { @class = "datepicker", @placeholder = "format: dd-mm-yyyy hh:mm:ss" })
 
-            <p class="label">Instellingen:</p>
-            <p class="label"> Temperatuur: <p class="radiobutton">@Html.RadioButtonFor(model => model.weerstationTemperatuurEenheid, false, new { @checked = "checked" }) Celsius</p><p class="radiubutton">@Html.RadioButtonFor(model => model.weerstationTemperatuurEenheid, true) Fahrenheit</p></p>
-            <p class="label"> Windschaal: @Html.RadioButtonFor(model => model.weerstationWindEenheid, false, new { @checked = "checked" }) meter per seconde @Html.RadioButtonFor(model => model.weerstationWindEenheid, true) Beaufort</p>
+            <p class="label">Filters (toegepast op Submit):</p>
+            <div class="settingsbox">
+                <div class="inner_settingsbox">
+                    <label>> Temperatuur: @Html.CheckBoxFor(model => model.enableWeerstationTemperatureGc, new { @checked = "checked" })</label>
+                    <label>> Temperatuur op 10 cm: @Html.CheckBoxFor(model => model.enableWeerstationTemperatureCm, new { @checked = "checked" })</label>
+                    <label>> Windsnelheid: @Html.CheckBoxFor(model => model.enableWeerstationWindspeed, new { @checked = "checked" })</label>
+                </div>             
+                <div class="inner_settingsbox">
+                    <label>> Luchtvochtigheid: @Html.CheckBoxFor(model => model.enableWeerstationHumidity, new { @checked = "checked" })</label>
+                    <label>> Luchtdruk: @Html.CheckBoxFor(model => model.enableWeerstationAirPressure, new { @checked = "checked" })</label>
+                </div>
+            </div>
 
+            <p class="label">Instellingen:</p>
+            <div class="settingsbox">
+                <div class="inner_settingsbox">
+                    <label>Temperatuureenheid:</label>
+                    <label>@Html.RadioButtonFor(model => model.weerstationTemperatuurEenheid, false, new { @checked = "checked" }) Celsius</label>
+                    <label>@Html.RadioButtonFor(model => model.weerstationTemperatuurEenheid, true) Fahrenheit</label>
+                </div>
+                <div class="inner_settingsbox">
+                    <label>Windschaaleenheid:</label>
+                    <label>@Html.RadioButtonFor(model => model.weerstationWindEenheid, false, new { @checked = "checked" }) Meter per seconde</label>
+                    <label>@Html.RadioButtonFor(model => model.weerstationWindEenheid, true) Beaufort</label>
+                </div>
+            </div>
+            
             <input type="submit" value="Submit" class="submitter" />
+
+            <p class="small-label">Opmerking: niet alle weerstations hebben alle sensoren beschikbaar. Sommige weerstations hebben dus geen temperatuur of luchtdruk of windsnelheid opgeslagen.</p>
         }
     </div>
     <div class="graph_right">
         <canvas id="chart"></canvas>
     </div>
 </div>
-<!-- #region Grafiekcode -->
+<!--
+            #region Grafiekcode -->
 @if (Model.selectedWeerstations.Count > 0)
 {
 <script>
-	var chartData = @Html.Raw(Json.Serialize(Model.chartData));
+    var chartData = @Html.Raw(Json.Serialize(Model.chartData));
 
-	function buildChart () {
-        var dataDates = chartData.value[0];
-		var dataTemperatureGc = chartData.value[1];
-        var dataTemperatureCm = chartData.value[2];
-        var dataWindspeedMs = chartData.value[3];
-        var dataWindspeedBf = chartData.value[4];
-        var dataHumidity = chartData.value[5];
-        var dataAirPressure = chartData.value[6];
+                function buildChart () {
+                    var dataDates = chartData.value[0];
+                    var dataTemperatureGc = chartData.value[1];
+                    var dataTemperatureCm = chartData.value[2];
+                    var dataWindspeedMs = chartData.value[3];
+                    var dataWindspeedBf = chartData.value[4];
+                    var dataHumidity = chartData.value[5];
+                    var dataAirPressure = chartData.value[6];
 
-        var dataT = {
+                    var dataT = {
             labels: dataDates,
             datasets: [
                 @if(Model.weerstationTemperatuurEenheid)
@@ -51,8 +77,8 @@
                         @:label: "Temperatuur in graden Fahrenheit",
                         @:data: dataTemperatureGc,
 				        @:fill: false,
-				        @:backgroundColor:["rgba(54, 162, 235, 0.2)", "rgba(255, 99, 132, 0.2)", "rgba(255, 159, 64, 0.2)", "rgba(255, 205, 86, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(153, 102, 255, 0.2)", "rgba(201, 203, 207, 0.2)"],
-				        @:borderColor:["rgb(54, 162, 235)", "rgb(255, 99, 132)", "rgb(255, 159, 64)", "rgb(255, 205, 86)", "rgb(75, 192, 192)", "rgb(153, 102, 255)", "rgb(201, 203, 207)"],
+				        @:backgroundColor: ["#e67300"],
+				        @:borderColor: ["#e67300"],
 				        @:borderWidth: 2
                         @:},
                     }
@@ -62,8 +88,8 @@
                         @:label: "Temperatuur op 10cm hoogte in graden Fahrenheit",
                         @:data: dataTemperatureCm,
                         @:fill: false,
-                        @:backgroundColor:["rgba(200, 100, 235, 0.2)", "rgba(255, 99, 132, 0.2)", "rgba(255, 159, 64, 0.2)", "rgba(255, 205, 86, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(153, 102, 255, 0.2)", "rgba(201, 203, 207, 0.2)"],
-                        @:borderColor:["rgb(200, 100, 235)", "rgb(255, 99, 132)", "rgb(255, 159, 64)", "rgb(255, 205, 86)", "rgb(75, 192, 192)", "rgb(153, 102, 255)", "rgb(201, 203, 207)"],
+                        @:backgroundColor: ["#802b00"],
+				        @:borderColor: ["#802b00"],
                         @:borderWidth: 2
                         @:},
                     }
@@ -76,8 +102,8 @@
                         @:label: "Temperatuur in graden Celsius",
                         @:data: dataTemperatureGc,
 				        @:fill: false,
-				        @:backgroundColor:["rgba(54, 162, 235, 0.2)", "rgba(255, 99, 132, 0.2)", "rgba(255, 159, 64, 0.2)", "rgba(255, 205, 86, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(153, 102, 255, 0.2)", "rgba(201, 203, 207, 0.2)"],
-				        @:borderColor:["rgb(54, 162, 235)", "rgb(255, 99, 132)", "rgb(255, 159, 64)", "rgb(255, 205, 86)", "rgb(75, 192, 192)", "rgb(153, 102, 255)", "rgb(201, 203, 207)"],
+				        @:backgroundColor: ["#e67300"],
+				        @:borderColor: ["#e67300"],
 				        @:borderWidth: 2
                         @:},
                     }
@@ -87,8 +113,8 @@
                         @:label: "Temperatuur op 10cm hoogte in graden Celsius",
                         @:data: dataTemperatureCm,
                         @:fill: false,
-                        @:backgroundColor:["rgba(200, 100, 235, 0.2)", "rgba(255, 99, 132, 0.2)", "rgba(255, 159, 64, 0.2)", "rgba(255, 205, 86, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(153, 102, 255, 0.2)", "rgba(201, 203, 207, 0.2)"],
-                        @:borderColor:["rgb(200, 100, 235)", "rgb(255, 99, 132)", "rgb(255, 159, 64)", "rgb(255, 205, 86)", "rgb(75, 192, 192)", "rgb(153, 102, 255)", "rgb(201, 203, 207)"],
+                        @:backgroundColor: ["#802b00"],
+				        @:borderColor: ["#802b00"],
                         @:borderWidth: 2
                         @:},
                     }
@@ -99,8 +125,8 @@
                     @:label: "Windsnelheid in meter per seconde",
                     @:data: dataWindspeedMs,
 				    @:fill: false,
-				    @:backgroundColor:["rgba(54, 162, 235, 0.2)", "rgba(255, 99, 132, 0.2)", "rgba(255, 159, 64, 0.2)", "rgba(255, 205, 86, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(153, 102, 255, 0.2)", "rgba(201, 203, 207, 0.2)"],
-				    @:borderColor:["rgb(54, 162, 235)", "rgb(255, 99, 132)", "rgb(255, 159, 64)", "rgb(255, 205, 86)", "rgb(75, 192, 192)", "rgb(153, 102, 255)", "rgb(201, 203, 207)"],
+				    @:backgroundColor:["#ffffff"],
+				    @:borderColor: ["#ffffff"],
 				    @:borderWidth: 2
                     @:},
                 }
@@ -110,8 +136,8 @@
                     @:label: "Windsnelheid volgens de schaal van Beaufort",
                     @:data: dataWindspeedBf,
 				    @:fill: false,
-				    @:backgroundColor:["rgba(54, 162, 235, 0.2)", "rgba(255, 99, 132, 0.2)", "rgba(255, 159, 64, 0.2)", "rgba(255, 205, 86, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(153, 102, 255, 0.2)", "rgba(201, 203, 207, 0.2)"],
-				    @:borderColor:["rgb(54, 162, 235)", "rgb(255, 99, 132)", "rgb(255, 159, 64)", "rgb(255, 205, 86)", "rgb(75, 192, 192)", "rgb(153, 102, 255)", "rgb(201, 203, 207)"],
+				    @:backgroundColor: ["#ffffff"],
+				    @:borderColor: ["#ffffff"],
 				    @:borderWidth: 2
                     @:},
                 }
@@ -121,8 +147,8 @@
                     @:label: "Luchtvochtigheid in relatieve percentage",
                     @:data: dataHumidity,
 				    @:fill: false,
-				    @:backgroundColor:["rgba(54, 162, 235, 0.2)", "rgba(255, 99, 132, 0.2)", "rgba(255, 159, 64, 0.2)", "rgba(255, 205, 86, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(153, 102, 255, 0.2)", "rgba(201, 203, 207, 0.2)"],
-				    @:borderColor:["rgb(54, 162, 235)", "rgb(255, 99, 132)", "rgb(255, 159, 64)", "rgb(255, 205, 86)", "rgb(75, 192, 192)", "rgb(153, 102, 255)", "rgb(201, 203, 207)"],
+				    @:backgroundColor: ["#3399ff"],
+				    @:borderColor: ["#3399ff"],
 				    @:borderWidth: 2
                     @:},
                 }
@@ -132,8 +158,8 @@
                     @:label: "Luchtdruk in hectopascal (hPa)",
                     @:data: dataAirPressure,
 				    @:fill: false,
-				    @:backgroundColor:["rgba(54, 162, 235, 0.2)", "rgba(255, 99, 132, 0.2)", "rgba(255, 159, 64, 0.2)", "rgba(255, 205, 86, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(153, 102, 255, 0.2)", "rgba(201, 203, 207, 0.2)"],
-				    @:borderColor:["rgb(54, 162, 235)", "rgb(255, 99, 132)", "rgb(255, 159, 64)", "rgb(255, 205, 86)", "rgb(75, 192, 192)", "rgb(153, 102, 255)", "rgb(201, 203, 207)"],
+				    @:backgroundColor: ["#000d1a"],
+				    @:borderColor: ["#000d1a"],
 				    @:borderWidth: 2
                     @:}
                 }
@@ -149,7 +175,7 @@
 				legend: { position: 'top' },
 				scales: {
 					xAxes: [{ gridLines: { display: false }, display: true, scaleLabel: { display: true, labelString: 'Moment' } }],
-					yAxes: [{ gridLines: { display: false }, display: true, scaleLabel: { display: true, labelString: 'Waarde' }, ticks: { stepSize: 10, beginAtZero: false } }]
+					yAxes: [{ gridLines: { display: false }, display: true, scaleLabel: { display: true, labelString: 'Waarde' }, ticks: { stepSize: 50, beginAtZero: false } }]
 				},
 			}
 		});

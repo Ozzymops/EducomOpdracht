@@ -8,11 +8,30 @@
         {
             <p class="label">Datumrange:</p>
             @Html.TextBoxFor(model => model.startPeriod, new { @class = "datepicker", @placeholder = "format: dd-mm-yyyy hh:mm:ss" })
-            <p class="label">tot</p>
+            <p class="label" style="display: block">tot</p>
             @Html.TextBoxFor(model => model.endPeriod, new { @class = "datepicker", @placeholder = "format: dd-mm-yyyy hh:mm:ss" })
 
+            <p class="label">Filters (toegepast op Submit):</p>
+            <div class="settingsbox">
+                <div class="inner_settingsbox">
+                    <label>> Maximum temperatuur: @Html.CheckBoxFor(model => model.enableWeerberichtMaxTemp, new { @checked = "checked" })</label>
+                    <label>> Minimum temperatuur: @Html.CheckBoxFor(model => model.enableWeerberichtMinTemp, new { @checked = "checked" })</label>
+                    <label>> Windsnelheid: @Html.CheckBoxFor(model => model.enableWeerberichtWindspeed, new { @checked = "checked" })</label>
+                </div>
+                <div class="inner_settingsbox">
+                    <label>> Regenkans: @Html.CheckBoxFor(model => model.enableWeerberichtRainChance, new { @checked = "checked" })</label>
+                    <label>> Zonkans: @Html.CheckBoxFor(model => model.enableWeerberichtSunChance, new { @checked = "checked" })</label>
+                </div>
+            </div>
+
             <p class="label">Instellingen:</p>
-            <p class="label"> Temperatuur: <p class="radiobutton">@Html.RadioButtonFor(model => model.weerberichtTemperatuurEenheid, false, new { @checked = "checked" }) Celsius</p><p class="radiubutton">@Html.RadioButtonFor(model => model.weerberichtTemperatuurEenheid, true) Fahrenheit</p></p>
+            <div class="settingsbox">
+                <div class="inner_settingsbox" style="margin: 25px">
+                    <label>Temperatuureenheid:</label>
+                    <label>@Html.RadioButtonFor(model => model.weerberichtTemperatuurEenheid, false, new { @checked = "checked" }) Celsius</label>
+                    <label>@Html.RadioButtonFor(model => model.weerberichtTemperatuurEenheid, true) Fahrenheit</label>
+                </div>
+            </div>
 
             <input type="submit" value="Submit" class="submitter" />
         }
@@ -21,15 +40,16 @@
         <canvas id="chart"></canvas>
     </div>
 </div>
-<!-- #region Grafiekcode -->
+<!--
+            #region Grafiekcode -->
 @if (Model.selectedWeerberichten.Count > 0)
 {
 <script>
-	var chartData = @Html.Raw(Json.Serialize(Model.chartData));
+    var chartData = @Html.Raw(Json.Serialize(Model.chartData));
 
-	function buildChart () {
+    function buildChart () {
         var dataDates = chartData.value[0];
-		var dataMaxTemperature = chartData.value[1];
+        var dataMaxTemperature = chartData.value[1];
         var dataMinTemperature = chartData.value[2];
         var dataWindspeedBf = chartData.value[3];
         var dataRainChance = chartData.value[4];
@@ -40,87 +60,106 @@
             datasets: [
                 @if(Model.weerberichtTemperatuurEenheid)
                 {
-                    @:{
-                    @:label: "Maximum temperatuur in graden Fahrenheit",
-                    @:data: dataMaxTemperature,
-				    @:fill: false,
-				    @:backgroundColor:["rgba(54, 162, 235, 0.2)", "rgba(255, 99, 132, 0.2)", "rgba(255, 159, 64, 0.2)", "rgba(255, 205, 86, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(153, 102, 255, 0.2)", "rgba(201, 203, 207, 0.2)"],
-				    @:borderColor:["rgb(54, 162, 235)", "rgb(255, 99, 132)", "rgb(255, 159, 64)", "rgb(255, 205, 86)", "rgb(75, 192, 192)", "rgb(153, 102, 255)", "rgb(201, 203, 207)"],
-				    @:borderWidth: 2
-                    @:},
-
-                    @:{
-                    @:label: "Minimum temperatuur in graden Fahrenheit",
-                    @:data: dataMinTemperature,
-                    @:fill: false,
-                    @:backgroundColor:["rgba(200, 100, 235, 0.2)", "rgba(255, 99, 132, 0.2)", "rgba(255, 159, 64, 0.2)", "rgba(255, 205, 86, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(153, 102, 255, 0.2)", "rgba(201, 203, 207, 0.2)"],
-                    @:borderColor:["rgb(200, 100, 235)", "rgb(255, 99, 132)", "rgb(255, 159, 64)", "rgb(255, 205, 86)", "rgb(75, 192, 192)", "rgb(153, 102, 255)", "rgb(201, 203, 207)"],
-                    @:borderWidth: 2
-                    @:},
+                    if (Model.selectedWeerberichten[0].MaxTemperature != -999)
+                    {
+                        @:{
+                        @:label: "Maximum temperatuur in graden Fahrenheit",
+                        @:data: dataMaxTemperature,
+				        @:fill: false,
+				        @:backgroundColor: ["#ff9966"],
+				        @:borderColor: ["#ff9966"],
+				        @:borderWidth: 2
+                        @:},
+                    }
+                    if (Model.selectedWeerberichten[0].MinTemperature != -999)
+                    {
+                        @:{
+                        @:label: "Minimum temperatuur in graden Fahrenheit",
+                        @:data: dataMinTemperature,
+                        @:fill: false,
+                        @:backgroundColor: ["#99ccff"],
+				        @:borderColor: ["#99ccff"],
+                        @:borderWidth: 2
+                        @:},
+                    }
                 }
                 else
                 {
+                    if (Model.selectedWeerberichten[0].MaxTemperature != -999)
+                    {
+                        @:{
+                        @:label: "Maximum temperatuur in graden Celsius",
+                        @:data: dataMaxTemperature,
+				        @:fill: false,
+				        @:backgroundColor: ["#ff9966"],
+				        @:borderColor: ["#ff9966"],
+				        @:borderWidth: 2
+                        @:},
+                    }
+                    if (Model.selectedWeerberichten[0].MinTemperature != -999)
+                    {
+                        @:{
+                        @:label: "Minimum temperatuur in graden Celsius",
+                        @:data: dataMinTemperature,
+                        @:fill: false,
+                        @:backgroundColor: ["#99ccff"],
+				        @:borderColor: ["#99ccff"],
+                        @:borderWidth: 2
+                        @:},
+                    }
+                }
+                @if (Model.selectedWeerberichten[0].Windspeed != -999)
+                {
                     @:{
-                    @:label: "Maximum temperatuur in graden Celsius",
-                    @:data: dataMaxTemperature,
+                    @:label: "Windsnelheid volgens de schaal van Beaufort",
+                    @:data: dataWindspeedBf,
 				    @:fill: false,
-				    @:backgroundColor:["rgba(54, 162, 235, 0.2)", "rgba(255, 99, 132, 0.2)", "rgba(255, 159, 64, 0.2)", "rgba(255, 205, 86, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(153, 102, 255, 0.2)", "rgba(201, 203, 207, 0.2)"],
-				    @:borderColor:["rgb(54, 162, 235)", "rgb(255, 99, 132)", "rgb(255, 159, 64)", "rgb(255, 205, 86)", "rgb(75, 192, 192)", "rgb(153, 102, 255)", "rgb(201, 203, 207)"],
+				    @:backgroundColor:["#ffffff"],
+				    @:borderColor: ["#ffffff"],
 				    @:borderWidth: 2
                     @:},
-
+                }
+                @if (Model.selectedWeerberichten[0].RainChance != -999)
+                {
                     @:{
-                    @:label: "Minimum temperatuur in graden Celsius",
-                    @:data: dataMinTemperature,
-                    @:fill: false,
-                    @:backgroundColor:["rgba(200, 100, 235, 0.2)", "rgba(255, 99, 132, 0.2)", "rgba(255, 159, 64, 0.2)", "rgba(255, 205, 86, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(153, 102, 255, 0.2)", "rgba(201, 203, 207, 0.2)"],
-                    @:borderColor:["rgb(200, 100, 235)", "rgb(255, 99, 132)", "rgb(255, 159, 64)", "rgb(255, 205, 86)", "rgb(75, 192, 192)", "rgb(153, 102, 255)", "rgb(201, 203, 207)"],
-                    @:borderWidth: 2
+                    @:label: "Kans op regen in percentage",
+                    @:data: dataRainChance,
+				    @:fill: false,
+				    @:backgroundColor: ["#0066ff"],
+				    @:borderColor: ["#0066ff"],
+				    @:borderWidth: 2
                     @:},
                 }
+                @if (Model.selectedWeerberichten[0].SunChance != -999)
                 {
-                label: "Windsnelheid volgens de schaal van Beaufort",
-                data: dataWindspeedBf,
-				fill: false,
-				backgroundColor:["rgba(54, 162, 235, 0.2)", "rgba(255, 99, 132, 0.2)", "rgba(255, 159, 64, 0.2)", "rgba(255, 205, 86, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(153, 102, 255, 0.2)", "rgba(201, 203, 207, 0.2)"],
-				borderColor:["rgb(54, 162, 235)", "rgb(255, 99, 132)", "rgb(255, 159, 64)", "rgb(255, 205, 86)", "rgb(75, 192, 192)", "rgb(153, 102, 255)", "rgb(201, 203, 207)"],
-				borderWidth: 2
-                },
-                {
-                label: "Kans op regen in %",
-                data: dataRainChance,
-                fill: false,
-                backgroundColor: ["rgba(54, 162, 235, 0.2)", "rgba(255, 99, 132, 0.2)", "rgba(255, 159, 64, 0.2)", "rgba(255, 205, 86, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(153, 102, 255, 0.2)", "rgba(201, 203, 207, 0.2)"],
-                borderColor: ["rgb(54, 162, 235)", "rgb(255, 99, 132)", "rgb(255, 159, 64)", "rgb(255, 205, 86)", "rgb(75, 192, 192)", "rgb(153, 102, 255)", "rgb(201, 203, 207)"],
-                borderWidth: 2
-                },
-                {
-                label: "Kans op zon in %",
-                data: dataSunChance,
-                fill: false,
-                backgroundColor: ["rgba(54, 162, 235, 0.2)", "rgba(255, 99, 132, 0.2)", "rgba(255, 159, 64, 0.2)", "rgba(255, 205, 86, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(153, 102, 255, 0.2)", "rgba(201, 203, 207, 0.2)"],
-                borderColor: ["rgb(54, 162, 235)", "rgb(255, 99, 132)", "rgb(255, 159, 64)", "rgb(255, 205, 86)", "rgb(75, 192, 192)", "rgb(153, 102, 255)", "rgb(201, 203, 207)"],
-                borderWidth: 2
+                    @:{
+                    @:label: "Kans op zon in percentage",
+                    @:data: dataSunChance,
+				    @:fill: false,
+				    @:backgroundColor: ["#ffcc00"],
+				    @:borderColor: ["#ffcc00"],
+				    @:borderWidth: 2
+                    @:}
                 }
             ]
-		};
-		var ctx = $("#chart").get(0).getContext("2d");
-		var myNewChart = new Chart(ctx, {
-			type: 'line',
-			data: dataT,
-			options: {
-				responsive: true,
-				title: { display: true, text: 'Resultaten weerberichten van @Model.startPeriod tot @Model.endPeriod' },
-				legend: { position: 'top' },
-				scales: {
-					xAxes: [{ gridLines: { display: false }, display: true, scaleLabel: { display: true, labelString: 'Moment' } }],
-					yAxes: [{ gridLines: { display: false }, display: true, scaleLabel: { display: true, labelString: 'Waarde' }, ticks: { stepSize: 10, beginAtZero: false } }]
-				},
-			}
-		});
-	};
+	    };
+	    var ctx = $("#chart").get(0).getContext("2d");
+	    var myNewChart = new Chart(ctx, {
+		    type: 'line',
+		    data: dataT,
+		    options: {
+			    responsive: true,
+			    title: { display: true, text: 'Resultaten weerberichten van @Model.startPeriod tot @Model.endPeriod' },
+			    legend: { position: 'top' },
+			    scales: {
+				    xAxes: [{ gridLines: { display: false }, display: true, scaleLabel: { display: true, labelString: 'Moment' } }],
+				    yAxes: [{ gridLines: { display: false }, display: true, scaleLabel: { display: true, labelString: 'Waarde' }, ticks: { stepSize: 10, beginAtZero: false } }]
+			    },
+		    }
+	    });
+    };
 
-	buildChart();
+    buildChart();
 </script>
 }
 <!-- #endregion -->

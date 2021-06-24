@@ -86,12 +86,23 @@ p.label {
     margin: auto;
     text-align: center;
     vertical-align: middle;
+    padding-left: 10px;
+}
+
+p.small-label {
+    display: flex;
+    font-size: 12px;
+    color: white;
+    margin: auto;
+    text-align: center;
+    vertical-align: middle;
 }
 
 .datepicker {
     display: flex;
     width: 95%;
     margin: 0 auto;
+    text-align: center;
 }
 
 .radiobutton {
@@ -133,4 +144,17 @@ div.graph_left {
 
 div.graph_right {
     width: 70%;
+}
+
+div.settingsbox {
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    margin: 0 auto;
+}
+
+div.inner_settingsbox {
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
 }

@@ -38,5 +38,17 @@ namespace EducomOpdracht.Models
         public bool weerstationWindEenheid { get; set; }
         public bool weerstationTemperatuurEenheid { get; set; }
         public bool weerberichtTemperatuurEenheid { get; set; }
+
+        // Filters
+        public bool enableWeerstationTemperatureGc { get; set; }
+        public bool enableWeerstationTemperatureCm { get; set; }
+        public bool enableWeerstationWindspeed { get; set; }
+        public bool enableWeerstationHumidity { get; set; }
+        public bool enableWeerstationAirPressure { get; set; }
+        public bool enableWeerberichtMaxTemp { get; set; }
+        public bool enableWeerberichtMinTemp { get; set; }
+        public bool enableWeerberichtWindspeed { get; set; }
+        public bool enableWeerberichtRainChance { get; set; }
+        public bool enableWeerberichtSunChance { get; set; }
     }
 }

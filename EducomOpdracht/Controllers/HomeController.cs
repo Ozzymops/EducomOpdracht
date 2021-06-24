@@ -48,6 +48,13 @@ namespace EducomOpdracht.Controllers
                 }
             }
 
+            // Filters van te voren instellen
+            gm.enableWeerstationTemperatureGc = true;
+            gm.enableWeerstationTemperatureCm = true;
+            gm.enableWeerstationWindspeed = true;
+            gm.enableWeerstationAirPressure = true;
+            gm.enableWeerstationHumidity = true;
+
             gm.selectedWeerstations = new List<Weerstation>();
             gm.weerstationList = visualWeerstations.Select(x => new SelectListItem() { Text = x.Name.ToString(), Value = x.StationId.ToString() });
 
@@ -137,6 +144,33 @@ namespace EducomOpdracht.Controllers
                         weerstation.TemperatureCm = (weerstation.TemperatureCm * 9) / 5 + 32;
                     }
                 }
+
+                // - Filterboxes
+                if (!gm.enableWeerstationTemperatureGc)
+                {
+                    weerstation.TemperatureGc = -999;
+                }
+
+                if (!gm.enableWeerstationTemperatureCm)
+                {
+                    weerstation.TemperatureCm = -999;
+                }
+
+                if (!gm.enableWeerstationWindspeed)
+                {
+                    weerstation.WindspeedBf = -999;
+                    weerstation.WindspeedMs = -999;
+                }
+
+                if (!gm.enableWeerstationHumidity)
+                {
+                    weerstation.Humidity = -999;
+                }
+
+                if (!gm.enableWeerstationAirPressure)
+                {
+                    weerstation.AirPressure = -999;
+                }
             }
 
             gm.weerstationList = visualWeerstations.Select(x => new SelectListItem() { Text = x.Name.ToString(), Value = x.StationId.ToString() });
@@ -157,6 +191,13 @@ namespace EducomOpdracht.Controllers
             GraphModel gm = new GraphModel();
 
             gm.selectedWeerberichten = new List<Weerbericht>();
+
+            // Filters van te voren instellen
+            gm.enableWeerberichtMaxTemp = true;
+            gm.enableWeerberichtMinTemp = true;
+            gm.enableWeerberichtWindspeed = true;
+            gm.enableWeerberichtRainChance = true;
+            gm.enableWeerberichtSunChance = true;
 
             return View(gm);
         }
@@ -187,12 +228,12 @@ namespace EducomOpdracht.Controllers
                 }
                 catch
                 {
-                    gm.startPeriodDate = DateTime.Now.AddDays(-3);
+                    gm.startPeriodDate = DateTime.Now;
                 }
             }
             else
             {
-                gm.startPeriodDate = DateTime.Now.AddDays(-3);
+                gm.startPeriodDate = DateTime.Now;
             }
 
             if (!string.IsNullOrEmpty(gm.endPeriod))
@@ -224,6 +265,32 @@ namespace EducomOpdracht.Controllers
                 {
                     weerbericht.MaxTemperature = (weerbericht.MaxTemperature * 9) / 5 + 32;
                     weerbericht.MinTemperature = (weerbericht.MinTemperature * 9) / 5 + 32;
+                }
+
+                // - Filterboxes
+                if (!gm.enableWeerberichtMaxTemp)
+                {
+                    weerbericht.MaxTemperature = -999;
+                }
+
+                if (!gm.enableWeerberichtMinTemp)
+                {
+                    weerbericht.MinTemperature = -999;
+                }
+
+                if (!gm.enableWeerberichtWindspeed)
+                {
+                    weerbericht.Windspeed = -999;
+                }
+
+                if (!gm.enableWeerberichtRainChance)
+                {
+                    weerbericht.RainChance = -999;
+                }
+
+                if (!gm.enableWeerberichtSunChance)
+                {
+                    weerbericht.SunChance = -999;
                 }
             }
 
