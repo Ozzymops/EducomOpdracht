@@ -4,30 +4,46 @@ namespace EducomOpdrachtAPI.Models
 {
     public class Weerstation
     {
-        /// <summary>
-        /// Weerstation vanuit https://data.buienradar.nl/1.1/feed/json opgehaald. Actuele data per weerstation.
-        /// </summary>
-        // Generieke data
+        // ID in de database
         public int Id { get; set; }
-        public long StationId { get; set; }
-        public DateTime Date { get; set; }
-        public string Region { get; set; }
-        public string Name { get; set; }
-        // Temperatuur
-        public double TemperatureGc { get; set; }   // temperatuur in graden Celsius
-        public double TemperatureCm { get; set; }   // temperatuur in graden Celsius op 10 cm hoogte
-        // Windsnelheid
-        public double WindspeedMs { get; set; }     // windsnelheid in meter per seconde
-        public int WindspeedBf { get; set; }        // windsnelheid volgens de schaal van Beaufort: https://www.knmi.nl/kennis-en-datacentrum/uitleg/windschaal-van-beaufort
-        // Overig
-        public int Humidity { get; set; }           // relatieve luchtvochtigheid in %
-        public double AirPressure { get; set; }     // luchtdruk in hectopascal (hPa), ook wel millibar
 
+        // ID van weerstation (buienradar)
+        public long StationId { get; set; }
+
+        // Datum van weerstation-meting
+        public DateTime Date { get; set; }
+
+        // Regio van weerstation
+        public string Region { get; set; }
+
+        // Naam van weerstation (meestal gewoon Weerstation Regio)
+        public string Name { get; set; }
+
+        // Temperatuur van weerstation-meting in graden Celsius
+        public double TemperatureGc { get; set; }
+
+        // Temperatuur van weerstation-meting in graden Celsius op 10 cm hoogte
+        public double TemperatureCm { get; set; }
+
+        // Windsnelheid van weerstation-meting in meter per seconde
+        public double WindspeedMs { get; set; }
+
+        // Windsnelheid van weerstation-meting volgens de schaal van Beaufort: https://www.knmi.nl/kennis-en-datacentrum/uitleg/windschaal-van-beaufort
+        public int WindspeedBf { get; set; }
+
+        // Relatieve luchtvochtigheid van weerstation-meting in percentage
+        public int Humidity { get; set; }
+
+        // Luchtdruk van weerstation-meting in hectopascal (hPa, ook wel millibar)
+        public double AirPressure { get; set; }
+
+        // Standaard constructor zonder parameters
         public Weerstation()
         {
 
         }
 
+        // Constructor voor gemak
         public Weerstation(long stationId, DateTime date, string region, string name, double temperatureGc, double temperatureCm, double windspeedMs, int windspeedBf, int humidity, double airPressure)
         {
             this.StationId = stationId;
