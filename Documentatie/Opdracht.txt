@@ -61,12 +61,6 @@ Update-Database -Context WeerberichtContext
 Update-Database -Context WeerstationContext
 
 [Waar heb ik over nagedacht?]
-Q: Waarom haalt de console applicatie de data op en niet de API zelf?
-A: In eerste instantie dacht ik dat de console applicatie de data kon ophalen en doorsturen naar de API, die meer fungeert als een database voor de site.
-   Later dacht ik ook aan de optie om een simpele call door te geven vanuit de console applicatie richting de API, zodat de API alles ophaalt op zichzelf.
-   Ik zat te twijfelen aan mijn eerdere keuze, maar heb het uiteindelijk gewoon zo gelaten omdat het niet heel veel leek uit te maken.
-   Dit is dan weer iets om later op te lossen, indien nodig.
-
 Q: Waarom niet de bijgevoegde MVC charts gebruikt?
 A: Deze crashten steeds en ik kon na urenlang zoeken geen oplossing vinden, dus heb ik maar een NuGet package gedownload die hetzelfde levert.
 

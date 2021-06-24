@@ -1,7 +1,16 @@
 USE [master]
 GO
 
-/****** Object:  Database [EducomOpdrachtAPI]    Script Date: 21-6-2021 12:47:05 ******/
+/****** Object:  Database [EducomOpdrachtAPI]    Script Date: 24-6-2021 16:47:06 ******/
+CREATE DATABASE [EducomOpdrachtAPI]
+ CONTAINMENT = NONE
+ ON  PRIMARY 
+( NAME = N'EducomOpdrachtAPI', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL15.SQLEXPRESS\MSSQL\DATA\EducomOpdrachtAPI.mdf' , SIZE = 8192KB , MAXSIZE = UNLIMITED, FILEGROWTH = 65536KB )
+ LOG ON 
+( NAME = N'EducomOpdrachtAPI_log', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL15.SQLEXPRESS\MSSQL\DATA\EducomOpdrachtAPI_log.ldf' , SIZE = 8192KB , MAXSIZE = 2048GB , FILEGROWTH = 65536KB )
+ WITH CATALOG_COLLATION = DATABASE_DEFAULT
+GO
+
 IF (1 = FULLTEXTSERVICEPROPERTY('IsFullTextInstalled'))
 begin
 EXEC [EducomOpdrachtAPI].[dbo].[sp_fulltext_database] @action = 'enable'
@@ -95,34 +104,16 @@ GO
 ALTER DATABASE [EducomOpdrachtAPI] SET DELAYED_DURABILITY = DISABLED 
 GO
 
+ALTER DATABASE [EducomOpdrachtAPI] SET ACCELERATED_DATABASE_RECOVERY = OFF  
+GO
+
 ALTER DATABASE [EducomOpdrachtAPI] SET QUERY_STORE = OFF
-GO
-
-USE [EducomOpdrachtAPI]
-GO
-
-ALTER DATABASE SCOPED CONFIGURATION SET LEGACY_CARDINALITY_ESTIMATION = OFF;
-GO
-
-ALTER DATABASE SCOPED CONFIGURATION SET MAXDOP = 0;
-GO
-
-ALTER DATABASE SCOPED CONFIGURATION SET PARAMETER_SNIFFING = ON;
-GO
-
-ALTER DATABASE SCOPED CONFIGURATION SET QUERY_OPTIMIZER_HOTFIXES = OFF;
 GO
 
 ALTER DATABASE [EducomOpdrachtAPI] SET  READ_WRITE 
 GO
 
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
-
-CREATE TABLE [dbo].[Weerstations](
+CREATE TABLE [EducomOpdrachtAPI].[dbo].[Weerstations](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
 	[StationId] [bigint] NOT NULL,
 	[Date] [datetime2](7) NOT NULL,
@@ -141,7 +132,7 @@ CREATE TABLE [dbo].[Weerstations](
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
 
-CREATE TABLE [dbo].[Weerberichten](
+CREATE TABLE [EducomOpdrachtAPI].[dbo].[Weerberichten](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
 	[Date] [datetime2](7) NOT NULL,
 	[MaxTemperature] [int] NOT NULL,
@@ -156,5 +147,5 @@ CREATE TABLE [dbo].[Weerberichten](
 ) ON [PRIMARY]
 GO
 
-EXEC master..sp_addsrvrolemember @loginame = N'NT AUTHORITY\SYSTEM', @rolename = N'sysadmin'
+EXEC EducomOpdrachtAPI..sp_addsrvrolemember @loginame = N'NT AUTHORITY\SYSTEM', @rolename = N'sysadmin'
 GO

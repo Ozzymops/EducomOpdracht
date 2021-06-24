@@ -40,7 +40,11 @@ namespace EducomOpdracht.Controllers
                 // Zo niet, voeg toe aan visueel lijst
                 if (index == -1)
                 {
-                    visualWeerstations.Add(weerstation);
+                    // Check voor NULL resultaten, zitten om de een of andere reden erbij
+                    if (!string.IsNullOrEmpty(weerstation.Name))
+                    {
+                        visualWeerstations.Add(weerstation);
+                    }                
                 }
             }
 

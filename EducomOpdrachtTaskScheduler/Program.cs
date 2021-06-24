@@ -63,6 +63,11 @@ namespace EducomOpdrachtTaskScheduler
                 HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(url);
                 webRequest.Method = "GET";
                 webRequest.ContentType = "application/x-www-form-urlencoded";
+                
+                // Authorisatie voor toegang tot POST methode in API
+                string encodedString = System.Convert.ToBase64String(Encoding.GetEncoding("ISO-8859-1").GetBytes(ConfigurationManager.AppSettings["consoleUsername"].ToString() + ":" + ConfigurationManager.AppSettings["consolePassword"].ToString()));
+                webRequest.Headers.Add("Authorization", "Basic " + encodedString);
+
 
                 Console.WriteLine(DateTime.Now.ToString() + " | Done. Executing web response...");
                 HttpWebResponse webResponse = (HttpWebResponse)webRequest.GetResponse();
