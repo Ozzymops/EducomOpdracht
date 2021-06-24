@@ -17,210 +17,55 @@ namespace EducomOpdrachtTaskScheduler
         {
             // API URL om uit te voeren, in dit geval de update database functie.
             Console.WriteLine(DateTime.Now.ToString() + " | Console application started.");
-            string result = UpdateDatabase(System.Configuration.ConfigurationManager.AppSettings["weerstationsUrl"], System.Configuration.ConfigurationManager.AppSettings["weerberichtenUrl"], System.Configuration.ConfigurationManager.AppSettings["buienradarUrl"]);
+            UpdateDatabase();
             Console.WriteLine(DateTime.Now.ToString() + " | Finished, console will close in 5 seconds...");
             Thread.Sleep(5000);
         }
 
-        public static string UpdateDatabase(string weerstationsUrl, string weerberichtenUrl, string buienradarUrl)
+        public static void UpdateDatabase()
         {
-            string json = string.Empty;
-
-            // Ophalen data buienradar door middel van een web request en response (benadert de API van buienradar)
-            Console.WriteLine(DateTime.Now.ToString() + " | Creating web request [GET]...");
-            HttpWebRequest getWebRequest = (HttpWebRequest)WebRequest.Create(buienradarUrl);
-            getWebRequest.Method = "GET";
-            getWebRequest.ContentType = "application/x-www-form-urlencoded";
-
-            Console.WriteLine(DateTime.Now.ToString() + " | Done. Executing web response...");
-            HttpWebResponse getWebResponse = (HttpWebResponse)getWebRequest.GetResponse();
-            using (StreamReader getStreamReader = new StreamReader(getWebResponse.GetResponseStream()))
+            // Weerstations
+            if (DoPost(0))
             {
-                json = getStreamReader.ReadToEnd();
+                Console.WriteLine(DateTime.Now.ToString() + " | Weatherstation operation succesful.");
+            }
+            else
+            {
+                Console.WriteLine(DateTime.Now.ToString() + " | Weatherstation operation aborted.");
             }
 
-            Console.WriteLine(DateTime.Now.ToString() + " | Done. Extracting relevant data from result...");
-
-            // Haalt relevante data uit resultaat
-            List<Weerstation> weerstations = new List<Weerstation>();
-            List<Weerbericht> weerberichten = new List<Weerbericht>();
-
-            JObject parsedJson = JObject.Parse(json);
-            int weerstationCount = parsedJson.SelectToken("buienradarnl.weergegevens.actueel_weer.weerstations").Value<JArray>("weerstation").Count;
-
-            Console.WriteLine(DateTime.Now.ToString() + " | Processing " + weerstationCount.ToString() + " weather stations...");
-
-            // Loop dat alle data verwerkt en in lijsten stopt
-            #region Weerstation actueel
-            for (int count = 0; count < weerstationCount; count++)
+            // Weerberichten
+            if (DoPost(1))
             {
-                // Weerstation
-                string weerstationChain = "buienradarnl.weergegevens.actueel_weer.weerstations.weerstation[" + count.ToString() + "]";
-
-                double temperatureGc;
-                double temperatureCm;
-                double windspeedMs;
-                int windspeedBf;
-                int humidity;
-                double airPressure;
-
-                #region Try/catch voor temperatuur, windsnelheid, luchtvochtigheid en luchtdruk
-                // Niet alle waarden bestaan bij alle weerstations, dus moeten try/catch statements gebruikt worden om niet-bestaande waarden te vervangen met een soort van placeholder: -999
-                // -999 wordt later verwerkt als 'niet-bestaand' op de site, en wordt dus niet getoond.
-                try
-                {
-                    temperatureGc = parsedJson.SelectToken(weerstationChain + ".temperatuurGC").Value<double>();                                  
-                }
-                catch
-                {
-                    temperatureGc = -999;                                     
-                }
-
-                try
-                {
-                    temperatureCm = parsedJson.SelectToken(weerstationChain + ".temperatuur10cm").Value<double>();
-                }
-                catch
-                {
-                    temperatureCm = -999;
-                }
-
-                try
-                {
-                    windspeedMs = parsedJson.SelectToken(weerstationChain + ".windsnelheidMS").Value<double>();
-                }
-                catch
-                {
-                    windspeedMs = -999;
-                }
-
-                try
-                {
-                    windspeedBf = parsedJson.SelectToken(weerstationChain + ".windsnelheidBF").Value<int>();
-                }
-                catch
-                {
-                    windspeedBf = -999;
-                }
-
-                try
-                {
-                    humidity = parsedJson.SelectToken(weerstationChain + ".luchtvochtigheid").Value<int>();
-                }
-                catch
-                {
-                    humidity = -999;
-                }
-
-                try
-                {
-                    airPressure = parsedJson.SelectToken(weerstationChain + "luchtdruk").Value<double>();
-                }
-                catch
-                {
-                    airPressure = -999;
-                }
-                #endregion
-
-                Weerstation weerstation = new Weerstation(parsedJson.SelectToken(weerstationChain + ".stationcode").Value<long>(),
-                    parsedJson.SelectToken(weerstationChain + ".datum").Value<DateTime>(),
-                    parsedJson.SelectToken(weerstationChain + ".stationnaam.@regio").Value<string>(),
-                    parsedJson.SelectToken(weerstationChain + ".stationnaam.#text").Value<string>(),
-                    temperatureGc,
-                    temperatureCm,
-                    windspeedMs,
-                    windspeedBf,
-                    humidity,
-                    airPressure);
-
-                weerstations.Add(weerstation);
+                Console.WriteLine(DateTime.Now.ToString() + " | Weather forecast operation succesful.");
             }
-            #endregion
-
-            #region Weerbericht 5-daags
-            Console.WriteLine(DateTime.Now.ToString() + " | Processing forecast of +5 days...");
-
-            // Haalt data op voor de meerdaagse verwachting
-            for (int meerdaagseCount = 1; meerdaagseCount < 6; meerdaagseCount++)
+            else
             {
-                string weerberichtChain = "buienradarnl.weergegevens.verwachting_meerdaags.dag-plus" + meerdaagseCount.ToString();
-                Weerbericht weerbericht = new Weerbericht(DateTime.Parse(parsedJson.SelectToken(weerberichtChain + ".datum").Value<string>(), new System.Globalization.CultureInfo("nl-NL")),
-                    parsedJson.SelectToken(weerberichtChain + ".maxtemp").Value<int>(),
-                    parsedJson.SelectToken(weerberichtChain + ".mintemp").Value<int>(),
-                    parsedJson.SelectToken(weerberichtChain + ".windkracht").Value<int>(),
-                    parsedJson.SelectToken(weerberichtChain + ".kansregen").Value<int>(),
-                    parsedJson.SelectToken(weerberichtChain + ".kanszon").Value<int>());
-
-                weerberichten.Add(weerbericht);
+                Console.WriteLine(DateTime.Now.ToString() + " | Weather forecast operation aborted.");
             }
-            #endregion
-
-            // (misschien bad practice? maar werkt voor nu)
-            // Loop door de lijst en voer POST functies uit
-            foreach (Weerstation weerstation in weerstations)
-            {
-                // Serialiseer object in lijst zodat het verstuurd kan worden
-                string weerstationJson = JsonConvert.SerializeObject(weerstation);
-
-                // Verwijs naar POST functie
-                if (!DoPost(weerstationsUrl, weerstationJson))
-                {
-                    Console.WriteLine(DateTime.Now.ToString() + " | Weatherstation operation aborted.");
-                    break;
-                }
-            }
-
-            foreach (Weerbericht weerbericht in weerberichten)
-            {
-                // Serialiseer object in lijst zodat het verstuurd kan worden
-                string weerberichtJson = JsonConvert.SerializeObject(weerbericht);
-
-                // Verwijs naar POST functie
-                if (!DoPost(weerberichtenUrl, weerberichtJson))
-                {
-                    Console.WriteLine(DateTime.Now.ToString() + " | Weather forecast operation aborted.");
-                    break;
-                }
-            }
-
-            return string.Empty;
         }
 
-        public static bool DoPost(string url, string json)
+        public static bool DoPost(int type)
         {
             try
             {
-                // POST functie richting API
-                HttpWebRequest postWebRequest = (HttpWebRequest)WebRequest.Create(url);
-                postWebRequest.ContentType = "application/json; charset=utf-8";
-                postWebRequest.Method = "POST";
+                string url = string.Empty;
 
-                // SSL certificate error fix
-                postWebRequest.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
-
-                // Authorisatie voor toegang tot POST methode in API
-                string encodedString = System.Convert.ToBase64String(Encoding.GetEncoding("ISO-8859-1").GetBytes(ConfigurationManager.AppSettings["consoleUsername"].ToString() + ":" + ConfigurationManager.AppSettings["consolePassword"].ToString()));
-                postWebRequest.Headers.Add("Authorization", "Basic " + encodedString);
-
-                using (StreamWriter streamWriter = new StreamWriter(postWebRequest.GetRequestStream()))
+                if (type == 0)
                 {
-                    streamWriter.Write(json);
-                    streamWriter.Flush();
+                    url = System.Configuration.ConfigurationManager.AppSettings["weerstationsUrl"];
+                }
+                else
+                {
+                    url = System.Configuration.ConfigurationManager.AppSettings["weerberichtenUrl"];
                 }
 
-                HttpWebResponse postWebResponse = (HttpWebResponse)postWebRequest.GetResponse();
-                using (StreamReader postStreamReader = new StreamReader(postWebResponse.GetResponseStream()))
-                {
-                    string response = postStreamReader.ReadToEnd();
-                    if (response != null && response != string.Empty)
-                    {
-                        Console.WriteLine(response);
-                    }
-                    else
-                    {
-                        Console.WriteLine("Operation failed, no authorisation.");
-                    }
-                }
+                HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(url);
+                webRequest.Method = "GET";
+                webRequest.ContentType = "application/x-www-form-urlencoded";
+
+                Console.WriteLine(DateTime.Now.ToString() + " | Done. Executing web response...");
+                HttpWebResponse webResponse = (HttpWebResponse)webRequest.GetResponse();
 
                 return true;
             }

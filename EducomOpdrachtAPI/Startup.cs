@@ -23,12 +23,14 @@ namespace EducomOpdrachtAPI
         public void ConfigureServices(IServiceCollection services)
         {
             // Registratie van database context als service
-            //services.AddDbContext<WeerstationContext>(opt => opt.UseInMemoryDatabase("Weerstations"));
             services.AddDbContext<WeerstationContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("SqlConnection")));
-            //services.AddDbContext<WeerberichtContext>(opt => opt.UseInMemoryDatabase("Weerberichten"));
             services.AddDbContext<WeerberichtContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("SqlConnection")));
-
+      
             services.AddControllers();
+
+            // Registratie van controllers om later te gebruiken in de MiddleController
+            services.AddTransient<Controllers.WeerstationsController>();
+            services.AddTransient<Controllers.WeerberichtenController>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

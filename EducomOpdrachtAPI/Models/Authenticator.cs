@@ -35,5 +35,20 @@ namespace EducomOpdrachtAPI.Models
 
             return false;
         }
+
+        public bool Authenticate(string[] loginData)
+        {
+            if (loginData.Length != 0)
+            {
+                // Username en password staan in web.config. Dit is puur en alleen zodat de console app een vorm van authenticatie heeft,
+                // en niet iedereen zomaar wat kan POSTen of PUTen - alleen de console app!
+                if (loginData[0] == ConfigurationManager.AppSettings["consoleUsername"] && loginData[1] == ConfigurationManager.AppSettings["consolePassword"])
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
     }
 }

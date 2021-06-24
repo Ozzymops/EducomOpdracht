@@ -163,6 +163,39 @@ namespace EducomOpdrachtAPI.Controllers
             return NoContent();
         }
 
+        // POST: api/Weerberichten/list
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpGet("list")]
+        public async Task<ActionResult<List<Weerbericht>>> GetAndPostWeerberichtList()
+        {
+            // Authenticeer: alleen de console app mag toegang hebben tot POST en PUT
+            Authenticator auth = new Authenticator();
+            bool authenticated = auth.Authenticate(Request.Headers["Authorization"].ToString());
+
+            if (authenticated)
+            {
+                Models.Database database = new Models.Database();
+                database.GetWeerberichtenFromFeed();
+
+                foreach (Weerbericht weerbericht in database.weerberichten)
+                {
+                    if (!_context.Weerberichten.Any(o => o.Date == weerbericht.Date))
+                    {
+                        _context.Weerberichten.Add(weerbericht);
+                        await _context.SaveChangesAsync();
+                    }
+                    else
+                    {
+                        int id = _context.Weerberichten.First(o => o.Date == weerbericht.Date).Id;
+                        weerbericht.Id = id;
+                        await PutWeerbericht((long)id, weerbericht);
+                    }
+                }
+            }
+
+            return NoContent();
+        }
+
         // DELETE: api/Weerberichten/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteWeerbericht(long id)

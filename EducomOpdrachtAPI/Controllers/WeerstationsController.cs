@@ -6,11 +6,11 @@ using Microsoft.EntityFrameworkCore;
 using EducomOpdrachtAPI.DAL;
 using EducomOpdrachtAPI.Models;
 using System;
+using Microsoft.AspNetCore.Routing;
 
 namespace EducomOpdrachtAPI.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController]
     public class WeerstationsController : ControllerBase
     {
         private readonly WeerstationContext _context;
@@ -113,7 +113,7 @@ namespace EducomOpdrachtAPI.Controllers
             }
 
             _context.Entry(weerstation).State = EntityState.Modified;
-
+            
             try
             {
                 await _context.SaveChangesAsync();
@@ -159,6 +159,39 @@ namespace EducomOpdrachtAPI.Controllers
                 return CreatedAtAction(nameof(GetWeerstation), new { id = weerstation.Id }, weerstation);
             }
 
+            return NoContent();
+        }
+
+        // POST: api/Weerstations/list
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpGet("list")]
+        public async Task<ActionResult<List<Weerstation>>> GetAndPostWeerstationList()
+        {
+            // Authenticeer: alleen de console app mag toegang hebben tot POST en PUT
+            Authenticator auth = new Authenticator();
+            bool authenticated = auth.Authenticate(Request.Headers["Authorization"].ToString());
+
+            if (authenticated)
+            {
+                Models.Database database = new Models.Database();
+                database.GetWeerstationsFromFeed();
+
+                foreach (Weerstation weerstation in database.weerstations)
+                {
+                    if (!_context.Weerstations.Any(o => o.StationId == weerstation.StationId && o.Date == weerstation.Date))
+                    {
+                        _context.Weerstations.Add(weerstation);
+                        await _context.SaveChangesAsync();
+                    }
+                    else
+                    {
+                        int id = _context.Weerstations.First(o => o.StationId == weerstation.StationId && o.Date == weerstation.Date).Id;
+                        weerstation.Id = id;
+                        await PutWeerstation((long)id, weerstation);
+                    }
+                }
+            }
+      
             return NoContent();
         }
 
