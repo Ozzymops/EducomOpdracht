@@ -1,0 +1,5 @@
+[Package Manager Console]
+Add-Migration Initial -Context WeerberichtContext
+Add-Migration Initial -Context WeerstationContext
+Update-Database -Context WeerberichtContext
+Update-Database -Context WeerstationContext
