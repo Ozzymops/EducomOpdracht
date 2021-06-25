@@ -9,6 +9,4 @@ Je kunt verbinden met de site via https://84.25.11.199:443 en met de API via htt
 
 Negeer de SSL-certificaat waarschuwing :)
 
-Enige API commando's voor GET:
-  https://84.25.11.199:444/api/Weerberichten
-  https://84.25.11.199:444/api/Weerstations
+Enige API commando's voor GET: https://84.25.11.199:444/api/Weerberichten, https://84.25.11.199:444/api/Weerstations (werken misschien niet in browser)
